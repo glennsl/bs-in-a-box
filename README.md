@@ -48,7 +48,41 @@ In a browser context it is sufficient to include the bundle in a script tag:
 <script src="node_modules/bs-in-a-box/vendor/stdlibBundle.js"></script>
 ```
 
-In a node context you can read it in as a text file and evaluate it using `vm.runInContext` or a similar function. See
+In case you don't want to include all of `node_modules` in your production build, you can use `webpack`s `file-loader` to
+copy the file to your `build` directory. This is the setup [rebench](https://github.com/rebench/rebench.github.io) uses,
+in `webpack.config.js`:
+
+```javascript
+...
+module: {
+  loaders: [{
+    test: /\.(png|jpg|gif|html|css)$|stdlibBundle.js$/,
+    loader: 'file-loader?name=[name].[ext]'
+  }],
+},
+...
+```
+
+Then in a web worker (written in JavaScript):
+
+```javascript
+require('../node_modules/bs-in-a-box/vendor/stdlibBundle.js');
+importScripts('stdlibBundle.js');
+```
+
+If you use a script tag, you should put the `require` in your entry point module. If it's in Reason, just put this at the top:
+
+```reason
+[%%raw "require('../node_modules/bs-in-a-box/vendor/stdlibBundle.js')"];
+```
+
+Then the script tag might look like this, depending on what your output directory is:
+
+```html
+<script src="build/stdlibBundle.js"></script>
+```
+
+In a node context you can read it in as a text file and then evaluate it using `vm.runInContext` or a similar function. See
 the node_sandbox example for details.
 
 This package does not contain the Reason preprocessor (`refmt`). For bindings to that, see [bs-refmt](https://github.com/glennsl/bs-refmt)
