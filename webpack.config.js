@@ -1,6 +1,6 @@
 module.exports = {
-  entry: './examples/example.bs.js',
+  entry: './examples/browser.bs.js',
   output: {
-    filename: 'examples/browser.js'
+    filename: 'examples/browserBundle.js'
   }
 };

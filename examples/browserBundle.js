@@ -1554,11 +1554,14 @@ function toResult(jsObj) {
       process.stdout.write = _stdoutWrite;
       process.stderr.write = _stderrWrite;
     } else {
-      const _consoleError = console.error;
+      const _consoleLog = console.log;     // errors are written to console.log
+      const _consoleError = console.error; // warnings are written to console.error (at least it's consistently incnsistent)
+      console.log = capture;
       console.error = capture;
 
       res = f();
 
+      console.log = _consoleLog;
       console.error = _consoleError;
     }
 
