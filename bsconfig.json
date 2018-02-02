@@ -2,7 +2,11 @@
   "name": "bs-in-a-box",
   "version": "0.1.0",
   "sources": [
-    "src"
+    "src",
+    {
+      "dir": "examples",
+      "type": "dev"
+    }
   ],
   "package-specs": {
     "module": "commonjs",
