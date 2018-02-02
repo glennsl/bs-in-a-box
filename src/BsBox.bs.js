@@ -5,6 +5,8 @@ var Block      = require("bs-platform/lib/js/block.js");
 var Js_exn     = require("bs-platform/lib/js/js_exn.js");
 var Pervasives = require("bs-platform/lib/js/pervasives.js");
 
+((require('../vendor/bs.js')));
+
 function toResult(jsObj) {
   var match = jsObj.js_code;
   if (match == null) {
@@ -20,14 +22,31 @@ function toResult(jsObj) {
 }
 
 
-  function _captureConsoleErrors(f) {
+  function _captureConsoleOutput(f) {
+    const capture = (...args) => args.forEach(argument => errors += argument + `\n`);
+
     let errors = "";
-    const _consoleError = console.error;
-    console.error = (...args) => args.forEach(argument => errors += argument + `\n`);
+    let res;
 
-    let res = f();
+    if ((typeof process !== "undefined") && process.stdout && process.stdout.write) {
+      const _stdoutWrite = process.stdout.write; // errors are written to stdout
+      const _stderrWrite = process.stderr.write; // warnings are written to stderr ...
+      process.stdout.write = capture;
+      process.stderr.write = capture;
 
-    console.error = _consoleError;
+      res = f();
+
+      process.stdout.write = _stdoutWrite;
+      process.stderr.write = _stderrWrite;
+    } else {
+      const _consoleError = console.error;
+      console.error = capture;
+
+      res = f();
+
+      console.error = _consoleError;
+    }
+
     return [res, errors ? [errors] : 0];
   }
 
@@ -35,22 +54,29 @@ function toResult(jsObj) {
 
 function compile(code) {
   try {
-    var match = _captureConsoleErrors((function () {
-            return window.ocaml.compile(code);
+    var match = _captureConsoleOutput((function () {
+            return ocaml.compile(code);
           }));
+    var consoleOutput = match[1];
     var param = toResult(JSON.parse(match[0]));
     if (param.tag) {
-      return /* Error */Block.__(1, [param[0]]);
+      return /* Error */Block.__(1, [/* record */[
+                  /* message */param[0],
+                  /* details */consoleOutput
+                ]]);
     } else {
       return /* Ok */Block.__(0, [/* record */[
                   /* code */param[0],
-                  /* warnings */match[1]
+                  /* warnings */consoleOutput
                 ]]);
     }
   }
   catch (raw_exn){
     var exn = Js_exn.internalToOCamlException(raw_exn);
-    return /* Error */Block.__(1, ["Unrecognized compiler output: " + (String(exn) + "")]);
+    return /* Error */Block.__(1, [/* record */[
+                /* message */"Unrecognized compiler output: " + (String(exn) + ""),
+                /* details : None */0
+              ]]);
   }
 }
 

@@ -6,7 +6,12 @@ type success = {
   warnings: option(string)
 };
 
-type result = Js.Result.t(success, string);
+type error = {
+  message: string,
+  details: option(string)
+};
+
+type result = Js.Result.t(success, error);
 
 module InternalResult = {
   type t = {.
@@ -27,26 +32,43 @@ module InternalResult = {
     };
 };
 
-[@bs.val] [@bs.scope ("window", "ocaml")] external compile : string => string = "";
+[@bs.val] [@bs.scope "ocaml"] external compile : string => string = "";
 
 [%%raw {|
-  function _captureConsoleErrors(f) {
+  function _captureConsoleOutput(f) {
+    const capture = (...args) => args.forEach(argument => errors += argument + `\n`);
+
     let errors = "";
-    const _consoleError = console.error;
-    console.error = (...args) => args.forEach(argument => errors += argument + `\n`);
+    let res;
 
-    let res = f();
+    if ((typeof process !== "undefined") && process.stdout && process.stdout.write) {
+      const _stdoutWrite = process.stdout.write; // errors are written to stdout
+      const _stderrWrite = process.stderr.write; // warnings are written to stderr ...
+      process.stdout.write = capture;
+      process.stderr.write = capture;
 
-    console.error = _consoleError;
+      res = f();
+
+      process.stdout.write = _stdoutWrite;
+      process.stderr.write = _stderrWrite;
+    } else {
+      const _consoleError = console.error;
+      console.error = capture;
+
+      res = f();
+
+      console.error = _consoleError;
+    }
+
     return [res, errors ? [errors] : 0];
   }
 |}];
-[@bs.val] external _captureConsoleErrors : (unit => 'a) => ('a, option(string)) = "";
+[@bs.val] external _captureConsoleOutput : (unit => 'a) => ('a, option(string)) = "";
 
 let compile = code =>
   try {
-    let (json, warnings) = 
-      _captureConsoleErrors(() =>
+    let (json, consoleOutput) = 
+      _captureConsoleOutput(() =>
         code |> compile
       );
     
@@ -54,10 +76,13 @@ let compile = code =>
          |> InternalResult.unsafeFromJson
          |> InternalResult.toResult
          |> Js.Result.(
-           fun | Ok(code) => Ok({ code, warnings })
-               | Error(e) => Error(e)
+           fun | Ok(code)       => Ok({ code, warnings: consoleOutput })
+               | Error(message) => Error({ message, details: consoleOutput })
          );
   } {
   | exn =>
-    Error({j|Unrecognized compiler output: $exn|j});
+    Error({
+      message: {j|Unrecognized compiler output: $exn|j},
+      details: None
+    });
   }
