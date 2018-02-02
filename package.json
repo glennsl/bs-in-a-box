@@ -1,0 +1,19 @@
+{
+  "name": "bs-in-a-box",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "bsb -make-world -w",
+    "clean": "bsb -clean-world",
+    "build": "bsb -make-world"
+  },
+  "keywords": [
+    "bucklescript",
+    "compiler",
+    "embeddable"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "bs-platform": "^2.1.0"
+  }
+}
