@@ -3,10 +3,10 @@
 
 let code  = {|
   let hello thing =
-    Js.log {j|hello $thing!|j}
+    Js.log {j|Hello $thing!|j}
 
   let () =
-    hello "world"
+    hello (String.capitalize "world")
 |};
 
 let result =
@@ -19,6 +19,7 @@ switch result {
     | None            => ()
     };
 
+    Js.log(code);
     eval(code);
   }
 | Js.Result.Error({ message }) =>

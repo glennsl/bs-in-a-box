@@ -1,5 +1,5 @@
 
-[%raw "require('../vendor/bs.js')"];
+[%%raw "require('../vendor/bs.js')"];
 
 type success = {
   code: string,

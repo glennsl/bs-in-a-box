@@ -5,7 +5,8 @@ var Block      = require("bs-platform/lib/js/block.js");
 var Js_exn     = require("bs-platform/lib/js/js_exn.js");
 var Pervasives = require("bs-platform/lib/js/pervasives.js");
 
-((require('../vendor/bs.js')));
+require('../vendor/bs.js')
+;
 
 function toResult(jsObj) {
   var match = jsObj.js_code;

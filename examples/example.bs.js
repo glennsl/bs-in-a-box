@@ -3,7 +3,7 @@
 
 var BsBox = require("../src/BsBox.bs.js");
 
-var code = "\n  let hello thing =\n    Js.log {j|hello $thing!|j}\n\n  let () =\n    hello \"world\"\n";
+var code = "\n  let hello thing =\n    Js.log {j|Hello $thing!|j}\n\n  let () =\n    hello (String.capitalize \"world\")\n";
 
 var result = BsBox.compile(code);
 
@@ -12,10 +12,12 @@ if (result.tag) {
 } else {
   var match = result[0];
   var warnings = match[/* warnings */1];
+  var code$1 = match[/* code */0];
   if (warnings) {
     console.log("Warnings: ", warnings[0]);
   }
-  eval(match[/* code */0]);
+  console.log(code$1);
+  eval(code$1);
 }
 
 exports.code   = code;
