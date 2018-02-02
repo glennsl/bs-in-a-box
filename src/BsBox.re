@@ -1,4 +1,6 @@
 
+[%raw "require('../vendor/bs.js')"];
+
 type success = {
   code: string,
   warnings: option(string)
