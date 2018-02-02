@@ -50,3 +50,7 @@ In a browser context it is sufficient to include the bundle in a script tag:
 
 In a node context you can read it in as a text file and evaluate it using `vm.runInContext` or a similar function. See
 the node_sandbox example for details.
+
+## Licensing
+
+The `vendor` directory contains files built from code in the BuckleScript repository. Refer to its [Licensing](https://github.com/BuckleScript/bucklescript#licensing) section. Everything else is licensed under the [MIT license](LICENSE).
