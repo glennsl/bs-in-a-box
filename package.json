@@ -4,7 +4,8 @@
   "scripts": {
     "start": "bsb -make-world -w",
     "clean": "bsb -clean-world",
-    "build": "bsb -make-world"
+    "build": "bsb -make-world",
+    "webpack": "webpack -w"
   },
   "keywords": [
     "bucklescript",
@@ -14,6 +15,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "bs-platform": "^2.1.0"
+    "bs-platform": "^2.1.0",
+    "webpack": "^3.10.0"
   }
 }
