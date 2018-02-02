@@ -9,10 +9,10 @@ let result =
   BsBox.compile(code);
 
 switch result {
-| Js.Result.Ok(_) =>
+| Ok(_) =>
   failwith("should error");
 
-| Js.Result.Error({ message, details }) =>
+| Error({ message, details }) =>
   Js.log2("Caught error: ", message);
 
   switch details {

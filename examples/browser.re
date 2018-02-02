@@ -13,7 +13,7 @@ let result =
   BsBox.compile(code);
 
 switch result {
-| Js.Result.Ok({ BsBox.code, warnings }) => {
+| Ok({ code, warnings }) => {
     switch warnings {
     | Some(warnings)  => Js.log2("Warnings: ", warnings);
     | None            => ()
@@ -22,6 +22,6 @@ switch result {
     Js.log(code);
     eval(code);
   }
-| Js.Result.Error({ message }) =>
+| Error({ message }) =>
   Js.log2("Error: ", message)
 };
