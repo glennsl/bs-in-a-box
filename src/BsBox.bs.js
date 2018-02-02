@@ -59,7 +59,18 @@ function toResult(jsObj) {
 function compile(code) {
   try {
     var match = _captureConsoleOutput((function () {
-            return ocaml.compile(code);
+            var code$1 = code;
+            var match = typeof (window) === "undefined" ? undefined : (window);
+            if (match !== undefined) {
+              return match.ocaml.compile(code$1);
+            } else {
+              var match$1 = typeof (global) === "undefined" ? undefined : (global);
+              if (match$1 !== undefined) {
+                return match$1.ocaml.compile(code$1);
+              } else {
+                return Pervasives.failwith("Neither window or global exists!");
+              }
+            }
           }));
     var consoleOutput = match[1];
     var param = toResult(JSON.parse(match[0]));

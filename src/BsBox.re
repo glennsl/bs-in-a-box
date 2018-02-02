@@ -32,7 +32,16 @@ module InternalResult = {
     };
 };
 
-[@bs.val] [@bs.scope "ocaml"] external compile : string => string = "";
+[@bs.send] [@bs.scope "ocaml"] external compile : (Dom.window, string) => string = "";
+let compile = code =>
+  switch [%external window] {
+  | Some(window)    => compile(window, code)
+  | None            =>
+    switch [%external global] {
+    | Some(global)  => compile(global, code)
+    | None          => failwith("Neither window or global exists!")
+    }
+  };
 
 [%%raw {|
   function _captureConsoleOutput(f) {
