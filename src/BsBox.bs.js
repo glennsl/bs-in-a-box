@@ -5,7 +5,13 @@ var Block      = require("bs-platform/lib/js/block.js");
 var Js_exn     = require("bs-platform/lib/js/js_exn.js");
 var Pervasives = require("bs-platform/lib/js/pervasives.js");
 
-require('../vendor/bs.js')
+
+  // Load compiler
+  require('../vendor/bs.js');
+
+  // Attach to local variable, so we can still access it if the global is overwritten
+  var ocaml = global && global.ocaml || window.ocaml;
+
 ;
 
 function toResult(jsObj) {
@@ -59,18 +65,7 @@ function toResult(jsObj) {
 function compile(code) {
   try {
     var match = _captureConsoleOutput((function () {
-            var code$1 = code;
-            var match = typeof (window) === "undefined" ? undefined : (window);
-            if (match !== undefined) {
-              return match.ocaml.compile(code$1);
-            } else {
-              var match$1 = typeof (global) === "undefined" ? undefined : (global);
-              if (match$1 !== undefined) {
-                return match$1.ocaml.compile(code$1);
-              } else {
-                return Pervasives.failwith("Neither window or global exists!");
-              }
-            }
+            return ocaml.compile(code);
           }));
     var consoleOutput = match[1];
     var param = toResult(JSON.parse(match[0]));

@@ -1,5 +1,10 @@
+[%%raw {|
+  // Load compiler
+  require('../vendor/bs.js');
 
-[%%raw "require('../vendor/bs.js')"];
+  // Attach to local variable, so we can still access it if the global is overwritten
+  var ocaml = global && global.ocaml || window.ocaml;
+|}];
 
 type success = {
   code: string,
@@ -31,17 +36,6 @@ module InternalResult = {
       }
     };
 };
-
-[@bs.send] [@bs.scope "ocaml"] external compile : (Dom.window, string) => string = "";
-let compile = code =>
-  switch [%external window] {
-  | Some(window)    => compile(window, code)
-  | None            =>
-    switch [%external global] {
-    | Some(global)  => compile(global, code)
-    | None          => failwith("Neither window or global exists!")
-    }
-  };
 
 [%%raw {|
   function _captureConsoleOutput(f) {
@@ -77,6 +71,7 @@ let compile = code =>
 |}];
 [@bs.val] external _captureConsoleOutput : (unit => 'a) => ('a, option(string)) = "";
 
+[@bs.val] [@bs.scope "ocaml"] external compile : string => string = "";
 let compile = code =>
   try {
     let (json, consoleOutput) = 
