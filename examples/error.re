@@ -12,11 +12,10 @@ switch result {
 | Ok(_) =>
   failwith("should error");
 
-| Error({ message, details }) =>
-  Js.log2("Caught error: ", message);
+| Error({ message, console, from: { line, column } }) =>
+  Js.log({j|Error: $message\nLine $line, column $column|j});
 
-  switch details {
-  | Some(details) => Js.log2("Details:\n", details)
-  | None          => ()
+  if (String.trim(console) !== "") {
+    Js.log2("\nDetails:\n", console);
   };
 };

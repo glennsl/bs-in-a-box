@@ -1,6 +1,7 @@
 
-type success  = { code: string, warnings: option(string) }
-and  error    = { message: string, details: option(string) }
+type location = { line: int, column: int }
+and  success  = { code: string, warnings: string }
+and  error    = { message: string, from: location, until: location, console: string }
 and  result   = Js.Result.t(success, error);
 
 let compile : string => result;

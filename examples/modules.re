@@ -59,9 +59,8 @@ let result =
 
 switch result {
 | Ok({ code, warnings }) => {
-    switch warnings {
-    | Some(warnings)  => Js.log2("Warnings: ", warnings);
-    | None            => ()
+    if (String.trim(warnings) !== "") {
+      Js.log2("Warnings: ", warnings);
     };
 
     let context = createContext([%raw "{ console: console, exports: {} }"]);
@@ -69,9 +68,10 @@ switch result {
     runInContext(stdlib, context);
     runInContext(code, context);
   }
-| Error({ message, details }) =>
-  switch details {
-  | Some(details) => Js.log2("Error: ", details)
-  | None          => Js.log2("Error: ", message)
-  }
+| Error({ message, console }) =>
+    if (String.trim(console) !== "") {
+      Js.log2("Error: ", console)
+    } else {
+      Js.log2("Error: ", message)
+    };
 };

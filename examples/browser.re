@@ -14,9 +14,8 @@ let result =
 
 switch result {
 | Ok({ code, warnings }) => {
-    switch warnings {
-    | Some(warnings)  => Js.log2("Warnings: ", warnings);
-    | None            => ()
+    if (String.trim(warnings) !== "") {
+      Js.log2("Warnings: ", warnings);
     };
 
     Js.log(code);

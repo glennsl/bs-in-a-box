@@ -6,35 +6,63 @@
   var ocaml = global && global.ocaml || window.ocaml;
 |}];
 
+type location = {
+  line: int,
+  column: int
+};
+
 type success = {
   code: string,
-  warnings: option(string)
+  warnings: string
 };
 
 type error = {
   message: string,
-  details: option(string)
+  from: location,
+  until: location,
+  console: string
 };
 
 type result = Js.Result.t(success, error);
 
 module InternalResult = {
   type t = {.
-    "js_code": Js.nullable(string),
-    "text": Js.nullable(string)
+    "_type":        Js.nullable(string)
   };
 
-  external unsafeFromJson : Js.Json.t => t = "%identity";
+  type internalSuccess = {.
+    "js_code":      string
+  };
+
+  type internalError = {.
+    "js_error_msg": string,
+    "row":          int,
+    "column":       int,
+    "endRow":       int,
+    "endColumn":    int,
+    "text":         string
+  };
+
+  external unsafeFromJson   : Js.Json.t => t = "%identity";
+  external unsafeAsSuccess  : t => internalSuccess = "%identity";
+  external unsafeAsError : t => internalError = "%identity";
 
   let toResult = jsObj =>
-    switch (Js.Nullable.to_opt(jsObj##js_code)) {
-    | Some(code)    => Js.Result.Ok(code)
-    | None =>
-      switch (Js.Nullable.to_opt(jsObj##text)) {
-      | Some(error) => Js.Result.Error(error)
-      | None        => failwith("unknown response from compiler")
+    switch (Js.Nullable.to_opt(jsObj##_type)) {
+    | Some("error") => {
+        let error = jsObj |> unsafeAsError;
+        Js.Result.Error({
+          message: error##text,
+          from: { line: error##row, column: error##column },
+          until: { line: error##endRow, column: error##endColumn },
+          console: ""
+        })
       }
-    };
+    | _ => Js.Result.Ok({
+      code: (jsObj |> unsafeAsSuccess)##js_code,
+      warnings: ""
+    })
+  };
 };
 
 [%%raw {|
@@ -66,30 +94,23 @@ module InternalResult = {
       console.error = _consoleError;
     }
 
-    return [res, errors ? [errors] : 0];
+    return [res, errors ? errors : ""];
   }
 |}];
-[@bs.val] external _captureConsoleOutput : (unit => 'a) => ('a, option(string)) = "";
+[@bs.val] external _captureConsoleOutput : (unit => 'a) => ('a, string) = "";
 
 [@bs.val] [@bs.scope "ocaml"] external compile : string => string = "";
-let compile = code =>
-  try {
-    let (json, consoleOutput) = 
-      _captureConsoleOutput(() =>
-        code |> compile
-      );
-    
-    json |> Js.Json.parseExn
-         |> InternalResult.unsafeFromJson
-         |> InternalResult.toResult
-         |> Js.Result.(
-           fun | Ok(code)       => Ok({ code, warnings: consoleOutput })
-               | Error(message) => Error({ message, details: consoleOutput })
-         );
-  } {
-  | exn =>
-    Error({
-      message: {j|Unrecognized compiler output: $exn|j},
-      details: None
-    });
-  }
+let compile = code => {
+  let (json, consoleOutput) = 
+    _captureConsoleOutput(() =>
+      code |> compile
+    );
+  
+  json |> Js.Json.parseExn
+        |> InternalResult.unsafeFromJson
+        |> InternalResult.toResult
+        |> Js.Result.(
+          fun | Ok({ code }) => Ok({ code, warnings: consoleOutput })
+              | Error(error) => Error({ ...error, console: consoleOutput })
+        );
+};
