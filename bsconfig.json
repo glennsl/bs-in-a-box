@@ -5,6 +5,7 @@
     "src",
     {
       "dir": "examples",
+      "subdirs": true,
       "type": "dev"
     }
   ],
