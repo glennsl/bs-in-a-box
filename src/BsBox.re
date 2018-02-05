@@ -114,3 +114,7 @@ let compile = code => {
               | Error(error) => Error({ ...error, console: consoleOutput })
         );
 };
+
+[@bs.val] [@bs.scope "ocaml"] external loadModule : (string, string, string, string) => unit = "load_module";
+let loadModule = (~name, ~cmi, ~cmj) =>
+  loadModule({j|/static/cmis/$name.cmi|j}, cmi, {j|$name.cmj|j}, cmj);

@@ -96,5 +96,11 @@ function compile(code) {
   }
 }
 
-exports.compile = compile;
+function loadModule(name, cmi, cmj) {
+  ocaml.load_module("/static/cmis/" + (String(name) + ".cmi"), cmi, "" + (String(name) + ".cmj"), cmj);
+  return /* () */0;
+}
+
+exports.compile    = compile;
+exports.loadModule = loadModule;
 /*  Not a pure module */
