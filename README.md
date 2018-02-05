@@ -90,3 +90,8 @@ This package does not contain the Reason preprocessor (`refmt`). For bindings to
 ## Licensing
 
 The `vendor` directory contains files built from code in the BuckleScript repository. Refer to its [Licensing](https://github.com/BuckleScript/bucklescript#licensing) section. Everything else is licensed under the [MIT license](LICENSE).
+
+
+## Acknowledgement
+
+Thanks to [Hongbo Zhang](https://github.com/bobzhang) for creating the BuckleScript compiler, and [Alessandro Strada](https://github.com/astrada) for figuring out and doing the necessary work to be able to include external modules.
