@@ -42,6 +42,6 @@ switch result {
     Js.log("\nPost-evaluation context:");
     Js.log(context);
   }
-| Error({ message }) =>
+| Error(`BsCompileError({ message })) =>
   Js.log2("Error: ", message)
 };

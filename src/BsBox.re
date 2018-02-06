@@ -107,12 +107,12 @@ let compile = code => {
     );
   
   json |> Js.Json.parseExn
-        |> InternalResult.unsafeFromJson
-        |> InternalResult.toResult
-        |> Js.Result.(
+       |> InternalResult.unsafeFromJson
+       |> InternalResult.toResult
+       |> Js.Result.(
           fun | Ok({ code }) => Ok({ code, warnings: consoleOutput })
-              | Error(error) => Error({ ...error, console: consoleOutput })
-        );
+              | Error(error) => Error(`BsCompileError({ ...error, console: consoleOutput }))
+       );
 };
 
 [@bs.val] [@bs.scope "ocaml"] external loadModule : (string, string, string, string) => unit = "load_module";

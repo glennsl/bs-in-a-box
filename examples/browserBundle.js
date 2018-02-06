@@ -4053,7 +4053,7 @@ var code = "\n  let hello thing =\n    Js.log {j|Hello $thing!|j}\n\n  let () =\
 var result = BsBox.compile(code);
 
 if (result.tag) {
-  console.log("Error: ", result[0][/* message */0]);
+  console.log("Error: ", result[0][1][/* message */0]);
 } else {
   var match = result[0];
   var warnings = match[/* warnings */1];
@@ -4159,11 +4159,14 @@ function compile(code) {
   var param = toResult(JSON.parse(match[0]));
   if (param.tag) {
     var error = param[0];
-    return /* Error */Block.__(1, [/* record */[
-                /* message */error[/* message */0],
-                /* from */error[/* from */1],
-                /* until */error[/* until */2],
-                /* console */consoleOutput
+    return /* Error */Block.__(1, [/* `BsCompileError */[
+                774283494,
+                /* record */[
+                  /* message */error[/* message */0],
+                  /* from */error[/* from */1],
+                  /* until */error[/* until */2],
+                  /* console */consoleOutput
+                ]
               ]]);
   } else {
     return /* Ok */Block.__(0, [/* record */[

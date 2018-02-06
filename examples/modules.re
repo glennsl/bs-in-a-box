@@ -68,7 +68,7 @@ switch result {
     runInContext(stdlib, context);
     runInContext(code, context);
   }
-| Error({ message, console }) =>
+| Error(`BsCompileError({ message, console })) =>
     if (String.trim(console) !== "") {
       Js.log2("Error: ", console)
     } else {

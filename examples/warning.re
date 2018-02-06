@@ -17,6 +17,6 @@ switch result {
 
     eval(code);
   }
-| Error({ message }) =>
+| Error(`BsCompileError({ message })) =>
   Js.log2("Error: ", message)
 };

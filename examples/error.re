@@ -12,7 +12,7 @@ switch result {
 | Ok(_) =>
   failwith("should error");
 
-| Error({ message, console, from: { line, column } }) =>
+| Error(`BsCompileError({ message, console, from: { line, column } })) =>
   Js.log({j|Error: $message\nLine $line, column $column|j});
 
   if (String.trim(console) !== "") {

@@ -9,7 +9,7 @@ var code = "\n  let hello thing =\n    Js.log {j|Hello $thing!|j}\n\n  let () =\
 var result = BsBox.compile(code);
 
 if (result.tag) {
-  console.log("Error: ", result[0][/* message */0]);
+  console.log("Error: ", result[0][1][/* message */0]);
 } else {
   var match = result[0];
   var warnings = match[/* warnings */1];

@@ -19,7 +19,7 @@ var combinedCode = "\n  module Print : sig\n    " + (String(printInterface) + ("
 var result = BsBox.compile(combinedCode);
 
 if (result.tag) {
-  var match = result[0];
+  var match = result[0][1];
   var $$console = match[/* console */3];
   if ($$String.trim($$console) !== "") {
     console.log("Error: ", $$console);

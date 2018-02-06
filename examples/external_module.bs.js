@@ -17,7 +17,7 @@ var code = "\n  let () =\n    \"joe\" |> String.capitalize\n          |> MyExter
 var result = BsBox.compile(code);
 
 if (result.tag) {
-  console.log("Error: ", result[0][/* message */0]);
+  console.log("Error: ", result[0][1][/* message */0]);
 } else {
   var match = result[0];
   var warnings = match[/* warnings */1];

@@ -89,6 +89,6 @@ switch result {
     /* And finally, evaluate our compiled code */
     runInContext(code, context);
   }
-| Error({ message }) =>
+| Error(`BsCompileError({ message })) =>
   Js.log2("Error: ", message)
 };

@@ -82,11 +82,14 @@ function compile(code) {
   var param = toResult(JSON.parse(match[0]));
   if (param.tag) {
     var error = param[0];
-    return /* Error */Block.__(1, [/* record */[
-                /* message */error[/* message */0],
-                /* from */error[/* from */1],
-                /* until */error[/* until */2],
-                /* console */consoleOutput
+    return /* Error */Block.__(1, [/* `BsCompileError */[
+                774283494,
+                /* record */[
+                  /* message */error[/* message */0],
+                  /* from */error[/* from */1],
+                  /* until */error[/* until */2],
+                  /* console */consoleOutput
+                ]
               ]]);
   } else {
     return /* Ok */Block.__(0, [/* record */[
