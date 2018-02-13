@@ -37,6 +37,8 @@ Compiling and running code that does not use the standard library can be as simp
 be aware that the compiler is not modular, but instead attaches itself to `window.ocaml` or `global.ocaml` and can be
 interferred with by other code.
 
+### Standard Library
+
 If you want to use the standard library it gets a bit more complicated. This package includes a standard library bundle
 that must be evaluated in the context the compiled code will be run in. This is because the compiler will emit `require`
 calls, and the standard library bundle includes a `require` polyfill/override that knows about the standard library
@@ -86,6 +88,19 @@ In a node context you can read it in as a text file and then evaluate it using `
 the node_sandbox example for details.
 
 This package does not contain the Reason preprocessor (`refmt`). For bindings to that, see [bs-refmt](https://github.com/glennsl/bs-refmt)
+
+### Bundling
+
+The compiler has been tested to work with `webpack`, but requires a tiny bit of configuration because it depends on a few
+ndoe modules in code paths that aren't actually used in practice. To stub these out, just put the following in your
+`webpack.config.js`:
+
+```javascript
+  node: {
+    fs: 'empty',
+    child_process: 'empty'
+  }
+```
 
 ## Licensing
 
