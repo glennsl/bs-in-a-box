@@ -102,6 +102,31 @@ ndoe modules in code paths that aren't actually used in practice. To stub these 
   }
 ```
 
+### Load external modules
+
+Using external modules requires two components, the type information to use at compile-time, and the js-compiled module
+to use at runtime.
+
+#### Compile-time
+
+The type information will be retrieved from the `.cmi` and `.cmj` compilation artifacts, which needs to be encoded using
+[scripts/bin2js.js](https://github.com/glennsl/bs-in-a-box/blob/master/scripts/bin2js.js) and then loaded into the compiler
+using `BsBox.loadModule`:
+
+```reason
+BsBox.loadModule(
+  ~name="MyExternal",
+  ~cmi=[%raw {|"Caml1999I017\x84\x95\xa6\xbe\0\0\0f\0\0\0\x19\0\0\0V\0\0\0Q\xa0*MyExternal\xa0\xa0\xb0\x01\x03\xf3%hello@\xc0\xb0\xc1 \xb0\xb3\x90\xb0C&string@@\x90@\x02\x05\xf5\xe1\0\0\xfc\xb0\xb3\x90\xb0C&string@@\x90@\x02\x05\xf5\xe1\0\0\xfd@\x02\x05\xf5\xe1\0\0\xfe@\xb0\xc0&_none_A@\0\xff\x04\x02A@@\x84\x95\xa6\xbe\0\0\0\xf3\0\0\0(\0\0\0\x90\0\0\0w\xa0\xa0*MyExternal\x900\x02LzF\xe5\xf4\xb2\xdc|\xa1\xf5\xde3\xe4\xdf\"\xa0\xa0&String\x900e\x90\x7f\x1d\xde\xc3+\xe4\xc8\xa1\x90\x07\x91p\xe0\xf1\xa0\xa0*Pervasives\x900\r\x01ZZ!6e\x9b\r\xe41\xbe\x7f\x15E\xbe\xa0\xa0)Js_string\x900GV\xce|\x10H7Ib\x80\x9b\xb5F\".u\xa0\xa0%Js_re\x9006s\xb2X\x9a=\x93\xf6=\x05#\0\xa2\r\xd3f\xa0\xa0(Js_array\x900\x92\x1e\xbe\x88=\x94\xf1y@\x9d\x98\xefN\xd6\xdc\x0f\xa0\xa0\"Js\x900\xd3g\x87\x88u\xa2\xf2\xe6\x1b\xad\xa9\xc5\x81\x85lF\xa0\xa08CamlinternalFormatBasics\x900\x8b\x06\x9f\xca\x1eM\x93\x16\xb5\x88\xe5UO8\xbb$@\x84\x95\xa6\xbe\0\0\0\x01\0\0\0\0\0\0\0\0\0\0\0\0@%"|}],
+  ~cmj=[%raw {|"Caml1999I017\x84\x95\xa6\xbe\0\0\0D\0\0\0\x10\0\0\x008\0\0\x004\xa0*MyExternal\xa0\xa0\xb0\x01\x03\xf1%hello@\xc0\xb0\xb3\x90\xb0C&string@@\x90@\x02\x05\xf5\xe1\0\0\xfe@\xb0\xc0&_none_A@\0\xff\x04\x02A@@\x84\x95\xa6\xbe\0\0\0l\0\0\0\x0f\0\0\0:\0\0\0/\xa0\xa0*MyExternal\x900\xb3K@\b]?\xb6}\xec\xe1Q\xf5\x97\xb9\xe4\x06\xa0\xa0*Pervasives\x900\r\x01ZZ!6e\x9b\r\xe41\xbe\x7f\x15E\xbe\xa0\xa08CamlinternalFormatBasics\x900\x8b\x06\x9f\xca\x1eM\x93\x16\xb5\x88\xe5UO8\xbb$@\x84\x95\xa6\xbe\0\0\0\x01\0\0\0\0\0\0\0\0\0\0\0\0@%"|}]
+);
+```
+
+#### Runtime
+
+The js artifact needs to be bundled in such a way that it can be accessed via `require`. This can either be accomplished
+using browserify, which requires the compiled modules to be in amdjs format, or you can provide your own require function
+like the [external_module](https://github.com/glennsl/bs-in-a-box/blob/master/examples/external_module.re) example does.
+
 ## Licensing
 
 The `vendor` directory contains files built from code in the BuckleScript repository. Refer to its [Licensing](https://github.com/BuckleScript/bucklescript#licensing) section. Everything else is licensed under the [MIT license](LICENSE).

@@ -20,7 +20,7 @@ let myExternalCode = {|
   /* No side effect */
 |};
 
-/* Our dynam,ically compiled code will use `require` to load external modules, so we need to 
+/* Our dynamically compiled code will use `require` to load external modules, so we need to 
    override/create the require function and lookup up our external module, or if not found
    pass it on to the original require function, if any.Arg
    
