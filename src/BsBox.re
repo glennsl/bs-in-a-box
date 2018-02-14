@@ -23,8 +23,6 @@ type error = {
   console: string
 };
 
-type result = Js.Result.t(success, error);
-
 module InternalResult = {
   type t = {.
     "_type":        Js.nullable(string)
