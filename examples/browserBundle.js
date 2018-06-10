@@ -155,17 +155,17 @@ assert_failure.tag = 248;
 
 undefined_recursive_module.tag = 248;
 
-exports.out_of_memory              = out_of_memory;
-exports.sys_error                  = sys_error;
-exports.failure                    = failure;
-exports.invalid_argument           = invalid_argument;
-exports.end_of_file                = end_of_file;
-exports.division_by_zero           = division_by_zero;
-exports.not_found                  = not_found;
-exports.match_failure              = match_failure;
-exports.stack_overflow             = stack_overflow;
-exports.sys_blocked_io             = sys_blocked_io;
-exports.assert_failure             = assert_failure;
+exports.out_of_memory = out_of_memory;
+exports.sys_error = sys_error;
+exports.failure = failure;
+exports.invalid_argument = invalid_argument;
+exports.end_of_file = end_of_file;
+exports.division_by_zero = division_by_zero;
+exports.not_found = not_found;
+exports.match_failure = match_failure;
+exports.stack_overflow = stack_overflow;
+exports.sys_blocked_io = sys_blocked_io;
+exports.assert_failure = assert_failure;
 exports.undefined_recursive_module = undefined_recursive_module;
 /*  Not a pure module */
 
@@ -190,24 +190,21 @@ function app(_f, _args) {
     var args = _args;
     var f = _f;
     var arity = f.length;
-    var arity$1 = arity ? arity : 1;
+    var arity$1 = arity === 0 ? 1 : arity;
     var len = args.length;
     var d = arity$1 - len | 0;
-    if (d) {
-      if (d < 0) {
-        _args = Caml_array.caml_array_sub(args, arity$1, -d | 0);
-        _f = f.apply(null, Caml_array.caml_array_sub(args, 0, arity$1));
-        continue ;
-        
-      } else {
-        return (function(f,args){
-        return function (x) {
-          return app(f, args.concat(/* array */[x]));
-        }
-        }(f,args));
-      }
-    } else {
+    if (d === 0) {
       return f.apply(null, args);
+    } else if (d < 0) {
+      _args = Caml_array.caml_array_sub(args, arity$1, -d | 0);
+      _f = f.apply(null, Caml_array.caml_array_sub(args, 0, arity$1));
+      continue ;
+    } else {
+      return (function(f,args){
+      return function (x) {
+        return app(f, args.concat(/* array */[x]));
+      }
+      }(f,args));
     }
   };
 }
@@ -790,31 +787,31 @@ function __8(o) {
   }
 }
 
-exports.app     = app;
+exports.app = app;
 exports.curry_1 = curry_1;
-exports._1      = _1;
-exports.__1     = __1;
+exports._1 = _1;
+exports.__1 = __1;
 exports.curry_2 = curry_2;
-exports._2      = _2;
-exports.__2     = __2;
+exports._2 = _2;
+exports.__2 = __2;
 exports.curry_3 = curry_3;
-exports._3      = _3;
-exports.__3     = __3;
+exports._3 = _3;
+exports.__3 = __3;
 exports.curry_4 = curry_4;
-exports._4      = _4;
-exports.__4     = __4;
+exports._4 = _4;
+exports.__4 = __4;
 exports.curry_5 = curry_5;
-exports._5      = _5;
-exports.__5     = __5;
+exports._5 = _5;
+exports.__5 = __5;
 exports.curry_6 = curry_6;
-exports._6      = _6;
-exports.__6     = __6;
+exports._6 = _6;
+exports.__6 = __6;
 exports.curry_7 = curry_7;
-exports._7      = _7;
-exports.__7     = __7;
+exports._7 = _7;
+exports.__7 = __7;
 exports.curry_8 = curry_8;
-exports._8      = _8;
-exports.__8     = __8;
+exports._8 = _8;
+exports.__8 = __8;
 /* No side effect */
 
 
@@ -825,54 +822,6 @@ exports.__8     = __8;
 "use strict";
 
 
-var Block                   = __webpack_require__(7);
-var Caml_builtin_exceptions = __webpack_require__(0);
-
-function caml_obj_dup(x) {
-  var len = x.length | 0;
-  var v = new Array(len);
-  for(var i = 0 ,i_finish = len - 1 | 0; i <= i_finish; ++i){
-    v[i] = x[i];
-  }
-  v.tag = x.tag | 0;
-  return v;
-}
-
-function caml_obj_truncate(x, new_size) {
-  var len = x.length | 0;
-  if (new_size <= 0 || new_size > len) {
-    throw [
-          Caml_builtin_exceptions.invalid_argument,
-          "Obj.truncate"
-        ];
-  } else if (len !== new_size) {
-    for(var i = new_size ,i_finish = len - 1 | 0; i <= i_finish; ++i){
-      x[i] = 0;
-    }
-    x.length = new_size;
-    return /* () */0;
-  } else {
-    return 0;
-  }
-}
-
-function caml_lazy_make_forward(x) {
-  return Block.__(250, [x]);
-}
-
-function caml_update_dummy(x, y) {
-  var len = y.length | 0;
-  for(var i = 0 ,i_finish = len - 1 | 0; i <= i_finish; ++i){
-    x[i] = y[i];
-  }
-  var y_tag = y.tag | 0;
-  if (y_tag !== 0) {
-    x.tag = y_tag;
-    return /* () */0;
-  } else {
-    return 0;
-  }
-}
 
 function caml_int_compare(x, y) {
   if (x < y) {
@@ -884,253 +833,162 @@ function caml_int_compare(x, y) {
   }
 }
 
-function caml_compare(_a, _b) {
-  while(true) {
-    var b = _b;
-    var a = _a;
-    if (a === b) {
+function caml_bool_compare(x, y) {
+  if (x) {
+    if (y) {
       return 0;
     } else {
-      var a_type = typeof a;
-      var b_type = typeof b;
-      if (a_type === "string") {
-        var x = a;
-        var y = b;
-        if (x < y) {
-          return -1;
-        } else if (x === y) {
-          return 0;
-        } else {
-          return 1;
-        }
-      } else {
-        var is_a_number = +(a_type === "number");
-        var is_b_number = +(b_type === "number");
-        if (is_a_number !== 0) {
-          if (is_b_number !== 0) {
-            return caml_int_compare(a, b);
-          } else {
-            return -1;
-          }
-        } else if (is_b_number !== 0) {
-          return 1;
-        } else if (a_type === "boolean" || a_type === "undefined" || a === null) {
-          var x$1 = a;
-          var y$1 = b;
-          if (x$1 === y$1) {
-            return 0;
-          } else if (x$1 < y$1) {
-            return -1;
-          } else {
-            return 1;
-          }
-        } else if (a_type === "function" || b_type === "function") {
-          throw [
-                Caml_builtin_exceptions.invalid_argument,
-                "compare: functional value"
-              ];
-        } else {
-          var tag_a = a.tag | 0;
-          var tag_b = b.tag | 0;
-          if (tag_a === 250) {
-            _a = a[0];
-            continue ;
-            
-          } else if (tag_b === 250) {
-            _b = b[0];
-            continue ;
-            
-          } else if (tag_a === 248) {
-            return caml_int_compare(a[1], b[1]);
-          } else if (tag_a === 251) {
-            throw [
-                  Caml_builtin_exceptions.invalid_argument,
-                  "equal: abstract value"
-                ];
-          } else if (tag_a !== tag_b) {
-            if (tag_a < tag_b) {
-              return -1;
-            } else {
-              return 1;
-            }
-          } else {
-            var len_a = a.length | 0;
-            var len_b = b.length | 0;
-            if (len_a === len_b) {
-              var a$1 = a;
-              var b$1 = b;
-              var _i = 0;
-              var same_length = len_a;
-              while(true) {
-                var i = _i;
-                if (i === same_length) {
-                  return 0;
-                } else {
-                  var res = caml_compare(a$1[i], b$1[i]);
-                  if (res !== 0) {
-                    return res;
-                  } else {
-                    _i = i + 1 | 0;
-                    continue ;
-                    
-                  }
-                }
-              };
-            } else if (len_a < len_b) {
-              var a$2 = a;
-              var b$2 = b;
-              var _i$1 = 0;
-              var short_length = len_a;
-              while(true) {
-                var i$1 = _i$1;
-                if (i$1 === short_length) {
-                  return -1;
-                } else {
-                  var res$1 = caml_compare(a$2[i$1], b$2[i$1]);
-                  if (res$1 !== 0) {
-                    return res$1;
-                  } else {
-                    _i$1 = i$1 + 1 | 0;
-                    continue ;
-                    
-                  }
-                }
-              };
-            } else {
-              var a$3 = a;
-              var b$3 = b;
-              var _i$2 = 0;
-              var short_length$1 = len_b;
-              while(true) {
-                var i$2 = _i$2;
-                if (i$2 === short_length$1) {
-                  return 1;
-                } else {
-                  var res$2 = caml_compare(a$3[i$2], b$3[i$2]);
-                  if (res$2 !== 0) {
-                    return res$2;
-                  } else {
-                    _i$2 = i$2 + 1 | 0;
-                    continue ;
-                    
-                  }
-                }
-              };
-            }
-          }
-        }
-      }
+      return 1;
     }
-  };
+  } else if (y) {
+    return -1;
+  } else {
+    return 0;
+  }
 }
 
-function caml_equal(_a, _b) {
-  while(true) {
-    var b = _b;
-    var a = _a;
-    if (a === b) {
-      return /* true */1;
-    } else {
-      var a_type = typeof a;
-      if (a_type === "string" || a_type === "number" || a_type === "boolean" || a_type === "undefined" || a === null) {
-        return /* false */0;
-      } else {
-        var b_type = typeof b;
-        if (a_type === "function" || b_type === "function") {
-          throw [
-                Caml_builtin_exceptions.invalid_argument,
-                "equal: functional value"
-              ];
-        } else if (b_type === "number" || b_type === "undefined" || b === null) {
-          return /* false */0;
-        } else {
-          var tag_a = a.tag | 0;
-          var tag_b = b.tag | 0;
-          if (tag_a === 250) {
-            _a = a[0];
-            continue ;
-            
-          } else if (tag_b === 250) {
-            _b = b[0];
-            continue ;
-            
-          } else if (tag_a === 248) {
-            return +(a[1] === b[1]);
-          } else if (tag_a === 251) {
-            throw [
-                  Caml_builtin_exceptions.invalid_argument,
-                  "equal: abstract value"
-                ];
-          } else if (tag_a !== tag_b) {
-            return /* false */0;
-          } else {
-            var len_a = a.length | 0;
-            var len_b = b.length | 0;
-            if (len_a === len_b) {
-              var a$1 = a;
-              var b$1 = b;
-              var _i = 0;
-              var same_length = len_a;
-              while(true) {
-                var i = _i;
-                if (i === same_length) {
-                  return /* true */1;
-                } else if (caml_equal(a$1[i], b$1[i])) {
-                  _i = i + 1 | 0;
-                  continue ;
-                  
-                } else {
-                  return /* false */0;
-                }
-              };
-            } else {
-              return /* false */0;
-            }
-          }
-        }
-      }
-    }
-  };
+function caml_float_compare(x, y) {
+  if (x === y) {
+    return 0;
+  } else if (x < y) {
+    return -1;
+  } else if (x > y || x === x) {
+    return 1;
+  } else if (y === y) {
+    return -1;
+  } else {
+    return 0;
+  }
 }
 
-function caml_notequal(a, b) {
-  return 1 - caml_equal(a, b);
+function caml_string_compare(s1, s2) {
+  if (s1 === s2) {
+    return 0;
+  } else if (s1 < s2) {
+    return -1;
+  } else {
+    return 1;
+  }
 }
 
-function caml_greaterequal(a, b) {
-  return +(caml_compare(a, b) >= 0);
+function caml_bool_min(x, y) {
+  if (x) {
+    return y;
+  } else {
+    return x;
+  }
 }
 
-function caml_greaterthan(a, b) {
-  return +(caml_compare(a, b) > 0);
+function caml_int_min(x, y) {
+  if (x < y) {
+    return x;
+  } else {
+    return y;
+  }
 }
 
-function caml_lessequal(a, b) {
-  return +(caml_compare(a, b) <= 0);
+function caml_float_min(x, y) {
+  if (x < y) {
+    return x;
+  } else {
+    return y;
+  }
 }
 
-function caml_lessthan(a, b) {
-  return +(caml_compare(a, b) < 0);
+function caml_string_min(x, y) {
+  if (x < y) {
+    return x;
+  } else {
+    return y;
+  }
 }
 
-var caml_int32_compare = caml_int_compare;
+function caml_nativeint_min(x, y) {
+  if (x < y) {
+    return x;
+  } else {
+    return y;
+  }
+}
+
+function caml_int32_min(x, y) {
+  if (x < y) {
+    return x;
+  } else {
+    return y;
+  }
+}
+
+function caml_bool_max(x, y) {
+  if (x) {
+    return x;
+  } else {
+    return y;
+  }
+}
+
+function caml_int_max(x, y) {
+  if (x > y) {
+    return x;
+  } else {
+    return y;
+  }
+}
+
+function caml_float_max(x, y) {
+  if (x > y) {
+    return x;
+  } else {
+    return y;
+  }
+}
+
+function caml_string_max(x, y) {
+  if (x > y) {
+    return x;
+  } else {
+    return y;
+  }
+}
+
+function caml_nativeint_max(x, y) {
+  if (x > y) {
+    return x;
+  } else {
+    return y;
+  }
+}
+
+function caml_int32_max(x, y) {
+  if (x > y) {
+    return x;
+  } else {
+    return y;
+  }
+}
 
 var caml_nativeint_compare = caml_int_compare;
 
-exports.caml_obj_dup           = caml_obj_dup;
-exports.caml_obj_truncate      = caml_obj_truncate;
-exports.caml_lazy_make_forward = caml_lazy_make_forward;
-exports.caml_update_dummy      = caml_update_dummy;
-exports.caml_int_compare       = caml_int_compare;
-exports.caml_int32_compare     = caml_int32_compare;
+var caml_int32_compare = caml_int_compare;
+
+exports.caml_int_compare = caml_int_compare;
+exports.caml_bool_compare = caml_bool_compare;
+exports.caml_float_compare = caml_float_compare;
 exports.caml_nativeint_compare = caml_nativeint_compare;
-exports.caml_compare           = caml_compare;
-exports.caml_equal             = caml_equal;
-exports.caml_notequal          = caml_notequal;
-exports.caml_greaterequal      = caml_greaterequal;
-exports.caml_greaterthan       = caml_greaterthan;
-exports.caml_lessthan          = caml_lessthan;
-exports.caml_lessequal         = caml_lessequal;
+exports.caml_string_compare = caml_string_compare;
+exports.caml_int32_compare = caml_int32_compare;
+exports.caml_bool_min = caml_bool_min;
+exports.caml_int_min = caml_int_min;
+exports.caml_float_min = caml_float_min;
+exports.caml_string_min = caml_string_min;
+exports.caml_nativeint_min = caml_nativeint_min;
+exports.caml_int32_min = caml_int32_min;
+exports.caml_bool_max = caml_bool_max;
+exports.caml_int_max = caml_int_max;
+exports.caml_float_max = caml_float_max;
+exports.caml_string_max = caml_string_max;
+exports.caml_nativeint_max = caml_nativeint_max;
+exports.caml_int32_max = caml_int32_max;
 /* No side effect */
 
 
@@ -1174,12 +1032,12 @@ var imul = ( Math.imul || function (x,y) {
 
 var caml_nativeint_bswap = caml_int32_bswap;
 
-exports.div                  = div;
-exports.mod_                 = mod_;
-exports.caml_bswap16         = caml_bswap16;
-exports.caml_int32_bswap     = caml_int32_bswap;
+exports.div = div;
+exports.mod_ = mod_;
+exports.caml_bswap16 = caml_bswap16;
+exports.caml_int32_bswap = caml_int32_bswap;
 exports.caml_nativeint_bswap = caml_nativeint_bswap;
-exports.imul                 = imul;
+exports.imul = imul;
 /* imul Not a pure module */
 
 
@@ -1214,17 +1072,11 @@ function caml_create_string(len) {
           "String.create"
         ];
   } else {
-    return new Array(len);
-  }
-}
-
-function caml_string_compare(s1, s2) {
-  if (s1 === s2) {
-    return 0;
-  } else if (s1 < s2) {
-    return -1;
-  } else {
-    return 1;
+    var result = new Array(len);
+    for(var i = 0 ,i_finish = len - 1 | 0; i <= i_finish; ++i){
+      result[i] = /* "\000" */0;
+    }
+    return result;
   }
 }
 
@@ -1325,14 +1177,14 @@ function bytes_to_string(a) {
   var s = "";
   var s_len = len;
   if (i === 0 && len <= 4096 && len === bytes.length) {
-    return String.fromCharCode.apply(null,bytes);
+    return String.fromCharCode.apply(null, bytes);
   } else {
     var offset = 0;
     while(s_len > 0) {
       var next = s_len < 1024 ? s_len : 1024;
       var tmp_bytes = new Array(next);
       caml_blit_bytes(bytes, offset, tmp_bytes, 0, next);
-      s = s + String.fromCharCode.apply(null,tmp_bytes);
+      s = s + String.fromCharCode.apply(null, tmp_bytes);
       s_len = s_len - next | 0;
       offset = offset + next | 0;
     };
@@ -1351,9 +1203,9 @@ function caml_string_of_char_array(chars) {
 
 function caml_is_printable(c) {
   if (c > 31) {
-    return +(c < 127);
+    return c < 127;
   } else {
-    return /* false */0;
+    return false;
   }
 }
 
@@ -1376,20 +1228,19 @@ function get(s, i) {
   }
 }
 
-exports.bytes_of_string           = bytes_of_string;
-exports.bytes_to_string           = bytes_to_string;
-exports.caml_is_printable         = caml_is_printable;
+exports.bytes_of_string = bytes_of_string;
+exports.bytes_to_string = bytes_to_string;
+exports.caml_is_printable = caml_is_printable;
 exports.caml_string_of_char_array = caml_string_of_char_array;
-exports.caml_string_get           = caml_string_get;
-exports.caml_string_compare       = caml_string_compare;
-exports.caml_create_string        = caml_create_string;
-exports.caml_fill_string          = caml_fill_string;
-exports.caml_blit_string          = caml_blit_string;
-exports.caml_blit_bytes           = caml_blit_bytes;
-exports.caml_string_get16         = caml_string_get16;
-exports.caml_string_get32         = caml_string_get32;
-exports.string_of_char            = string_of_char;
-exports.get                       = get;
+exports.caml_string_get = caml_string_get;
+exports.caml_create_string = caml_create_string;
+exports.caml_fill_string = caml_fill_string;
+exports.caml_blit_string = caml_blit_string;
+exports.caml_blit_bytes = caml_blit_bytes;
+exports.caml_string_get16 = caml_string_get16;
+exports.caml_string_get32 = caml_string_get32;
+exports.string_of_char = string_of_char;
+exports.get = get;
 /* No side effect */
 
 
@@ -1596,7 +1447,43 @@ function __(tag, block) {
   return block;
 }
 
+function record(meta, xs) {
+  return Object.defineProperty(xs, Symbol.for("BsRecord"), {
+              value: meta
+            });
+}
+
+function variant(meta, tag, xs) {
+  xs.tag = tag;
+  return Object.defineProperty(xs, Symbol.for("BsVariant"), {
+              value: meta
+            });
+}
+
+function simpleVariant(meta, xs) {
+  return Object.defineProperty(xs, Symbol.for("BsVariant"), {
+              value: meta
+            });
+}
+
+function localModule(meta, xs) {
+  return Object.defineProperty(xs, Symbol.for("BsLocalModule"), {
+              value: meta
+            });
+}
+
+function polyVar(meta, xs) {
+  return Object.defineProperty(xs, Symbol.for("BsPolyVar"), {
+              value: meta
+            });
+}
+
 exports.__ = __;
+exports.record = record;
+exports.variant = variant;
+exports.simpleVariant = simpleVariant;
+exports.localModule = localModule;
+exports.polyVar = polyVar;
 /* No side effect */
 
 
@@ -1607,9 +1494,9 @@ exports.__ = __;
 "use strict";
 
 
-var Curry                   = __webpack_require__(2);
-var Caml_obj                = __webpack_require__(3);
-var Pervasives              = __webpack_require__(9);
+var Curry = __webpack_require__(2);
+var Caml_obj = __webpack_require__(9);
+var Pervasives = __webpack_require__(19);
 var Caml_builtin_exceptions = __webpack_require__(0);
 
 function length(l) {
@@ -1622,7 +1509,6 @@ function length(l) {
       _param = param[1];
       _len = len + 1 | 0;
       continue ;
-      
     } else {
       return len;
     }
@@ -1664,13 +1550,12 @@ function nth(l, n) {
       var n$1 = _n;
       var l$1 = _l;
       if (l$1) {
-        if (n$1) {
+        if (n$1 === 0) {
+          return l$1[0];
+        } else {
           _n = n$1 - 1 | 0;
           _l = l$1[1];
           continue ;
-          
-        } else {
-          return l$1[0];
         }
       } else {
         throw [
@@ -1693,7 +1578,6 @@ function rev_append(_l1, _l2) {
       ];
       _l1 = l1[1];
       continue ;
-      
     } else {
       return l2;
     }
@@ -1753,7 +1637,6 @@ function rev_map(f, l) {
         accu
       ];
       continue ;
-      
     } else {
       return accu;
     }
@@ -1767,7 +1650,6 @@ function iter(f, _param) {
       Curry._1(f, param[0]);
       _param = param[1];
       continue ;
-      
     } else {
       return /* () */0;
     }
@@ -1786,7 +1668,6 @@ function iteri(f, l) {
       _param = param[1];
       _i = i + 1 | 0;
       continue ;
-      
     } else {
       return /* () */0;
     }
@@ -1801,7 +1682,6 @@ function fold_left(f, _accu, _l) {
       _l = l[1];
       _accu = Curry._2(f, accu, l[0]);
       continue ;
-      
     } else {
       return accu;
     }
@@ -1857,7 +1737,6 @@ function rev_map2(f, l1, l2) {
           accu
         ];
         continue ;
-        
       } else {
         throw [
               Caml_builtin_exceptions.invalid_argument,
@@ -1885,7 +1764,6 @@ function iter2(f, _l1, _l2) {
         _l2 = l2[1];
         _l1 = l1[1];
         continue ;
-        
       } else {
         throw [
               Caml_builtin_exceptions.invalid_argument,
@@ -1914,7 +1792,6 @@ function fold_left2(f, _accu, _l1, _l2) {
         _l1 = l1[1];
         _accu = Curry._3(f, accu, l1[0], l2[0]);
         continue ;
-        
       } else {
         throw [
               Caml_builtin_exceptions.invalid_argument,
@@ -1959,12 +1836,11 @@ function for_all(p, _param) {
       if (Curry._1(p, param[0])) {
         _param = param[1];
         continue ;
-        
       } else {
-        return /* false */0;
+        return false;
       }
     } else {
-      return /* true */1;
+      return true;
     }
   };
 }
@@ -1974,14 +1850,13 @@ function exists(p, _param) {
     var param = _param;
     if (param) {
       if (Curry._1(p, param[0])) {
-        return /* true */1;
+        return true;
       } else {
         _param = param[1];
         continue ;
-        
       }
     } else {
-      return /* false */0;
+      return false;
     }
   };
 }
@@ -1996,9 +1871,8 @@ function for_all2(p, _l1, _l2) {
           _l2 = l2[1];
           _l1 = l1[1];
           continue ;
-          
         } else {
-          return /* false */0;
+          return false;
         }
       } else {
         throw [
@@ -2012,7 +1886,7 @@ function for_all2(p, _l1, _l2) {
             "List.for_all2"
           ];
     } else {
-      return /* true */1;
+      return true;
     }
   };
 }
@@ -2024,12 +1898,11 @@ function exists2(p, _l1, _l2) {
     if (l1) {
       if (l2) {
         if (Curry._2(p, l1[0], l2[0])) {
-          return /* true */1;
+          return true;
         } else {
           _l2 = l2[1];
           _l1 = l1[1];
           continue ;
-          
         }
       } else {
         throw [
@@ -2043,7 +1916,7 @@ function exists2(p, _l1, _l2) {
             "List.exists2"
           ];
     } else {
-      return /* false */0;
+      return false;
     }
   };
 }
@@ -2052,15 +1925,14 @@ function mem(x, _param) {
   while(true) {
     var param = _param;
     if (param) {
-      if (Caml_obj.caml_compare(param[0], x)) {
+      if (Caml_obj.caml_equal(param[0], x)) {
+        return true;
+      } else {
         _param = param[1];
         continue ;
-        
-      } else {
-        return /* true */1;
       }
     } else {
-      return /* false */0;
+      return false;
     }
   };
 }
@@ -2070,14 +1942,13 @@ function memq(x, _param) {
     var param = _param;
     if (param) {
       if (param[0] === x) {
-        return /* true */1;
+        return true;
       } else {
         _param = param[1];
         continue ;
-        
       }
     } else {
-      return /* false */0;
+      return false;
     }
   };
 }
@@ -2087,12 +1958,11 @@ function assoc(x, _param) {
     var param = _param;
     if (param) {
       var match = param[0];
-      if (Caml_obj.caml_compare(match[0], x)) {
+      if (Caml_obj.caml_equal(match[0], x)) {
+        return match[1];
+      } else {
         _param = param[1];
         continue ;
-        
-      } else {
-        return match[1];
       }
     } else {
       throw Caml_builtin_exceptions.not_found;
@@ -2110,7 +1980,6 @@ function assq(x, _param) {
       } else {
         _param = param[1];
         continue ;
-        
       }
     } else {
       throw Caml_builtin_exceptions.not_found;
@@ -2122,15 +1991,14 @@ function mem_assoc(x, _param) {
   while(true) {
     var param = _param;
     if (param) {
-      if (Caml_obj.caml_compare(param[0][0], x)) {
+      if (Caml_obj.caml_equal(param[0][0], x)) {
+        return true;
+      } else {
         _param = param[1];
         continue ;
-        
-      } else {
-        return /* true */1;
       }
     } else {
-      return /* false */0;
+      return false;
     }
   };
 }
@@ -2140,14 +2008,13 @@ function mem_assq(x, _param) {
     var param = _param;
     if (param) {
       if (param[0][0] === x) {
-        return /* true */1;
+        return true;
       } else {
         _param = param[1];
         continue ;
-        
       }
     } else {
-      return /* false */0;
+      return false;
     }
   };
 }
@@ -2156,13 +2023,13 @@ function remove_assoc(x, param) {
   if (param) {
     var l = param[1];
     var pair = param[0];
-    if (Caml_obj.caml_compare(pair[0], x)) {
+    if (Caml_obj.caml_equal(pair[0], x)) {
+      return l;
+    } else {
       return /* :: */[
               pair,
               remove_assoc(x, l)
             ];
-    } else {
-      return l;
     }
   } else {
     return /* [] */0;
@@ -2196,7 +2063,6 @@ function find(p, _param) {
       } else {
         _param = param[1];
         continue ;
-        
       }
     } else {
       throw Caml_builtin_exceptions.not_found;
@@ -2221,11 +2087,9 @@ function find_all(p) {
               accu
             ];
             continue ;
-            
           } else {
             _param = l;
             continue ;
-            
           }
         } else {
           return rev_append(accu, /* [] */0);
@@ -2252,7 +2116,6 @@ function partition(p, l) {
           yes
         ];
         continue ;
-        
       } else {
         _param = l$1;
         _no = /* :: */[
@@ -2260,7 +2123,6 @@ function partition(p, l) {
           no
         ];
         continue ;
-        
       }
     } else {
       return /* tuple */[
@@ -2347,24 +2209,21 @@ function chop(_k, _l) {
   while(true) {
     var l = _l;
     var k = _k;
-    if (k) {
-      if (l) {
-        _l = l[1];
-        _k = k - 1 | 0;
-        continue ;
-        
-      } else {
-        throw [
-              Caml_builtin_exceptions.assert_failure,
-              [
-                "list.ml",
-                223,
-                11
-              ]
-            ];
-      }
-    } else {
+    if (k === 0) {
       return l;
+    } else if (l) {
+      _l = l[1];
+      _k = k - 1 | 0;
+      continue ;
+    } else {
+      throw [
+            Caml_builtin_exceptions.assert_failure,
+            [
+              "list.ml",
+              223,
+              11
+            ]
+          ];
     }
   };
 }
@@ -2373,9 +2232,9 @@ function stable_sort(cmp, l) {
   var sort = function (n, l) {
     var exit = 0;
     if (n !== 2) {
-      if (n !== 3) {
+      if (n !== 3 || !l) {
         exit = 1;
-      } else if (l) {
+      } else {
         var match = l[1];
         if (match) {
           var match$1 = match[1];
@@ -2458,8 +2317,6 @@ function stable_sort(cmp, l) {
         } else {
           exit = 1;
         }
-      } else {
-        exit = 1;
       }
     } else if (l) {
       var match$2 = l[1];
@@ -2513,7 +2370,6 @@ function stable_sort(cmp, l) {
               ];
               _l1 = l1[1];
               continue ;
-              
             } else {
               _accu = /* :: */[
                 h2,
@@ -2521,7 +2377,6 @@ function stable_sort(cmp, l) {
               ];
               _l2 = l2$1[1];
               continue ;
-              
             }
           } else {
             return rev_append(l1, accu);
@@ -2536,9 +2391,9 @@ function stable_sort(cmp, l) {
   var rev_sort = function (n, l) {
     var exit = 0;
     if (n !== 2) {
-      if (n !== 3) {
+      if (n !== 3 || !l) {
         exit = 1;
-      } else if (l) {
+      } else {
         var match = l[1];
         if (match) {
           var match$1 = match[1];
@@ -2621,8 +2476,6 @@ function stable_sort(cmp, l) {
         } else {
           exit = 1;
         }
-      } else {
-        exit = 1;
       }
     } else if (l) {
       var match$2 = l[1];
@@ -2676,7 +2529,6 @@ function stable_sort(cmp, l) {
               ];
               _l1 = l1[1];
               continue ;
-              
             } else {
               _accu = /* :: */[
                 h2,
@@ -2684,7 +2536,6 @@ function stable_sort(cmp, l) {
               ];
               _l2 = l2$1[1];
               continue ;
-              
             }
           } else {
             return rev_append(l1, accu);
@@ -2708,9 +2559,9 @@ function sort_uniq(cmp, l) {
   var sort = function (n, l) {
     var exit = 0;
     if (n !== 2) {
-      if (n !== 3) {
+      if (n !== 3 || !l) {
         exit = 1;
-      } else if (l) {
+      } else {
         var match = l[1];
         if (match) {
           var match$1 = match[1];
@@ -2719,58 +2570,54 @@ function sort_uniq(cmp, l) {
             var x2 = match[0];
             var x1 = l[0];
             var c = Curry._2(cmp, x1, x2);
-            if (c) {
-              if (c < 0) {
-                var c$1 = Curry._2(cmp, x2, x3);
-                if (c$1) {
-                  if (c$1 < 0) {
-                    return /* :: */[
-                            x1,
-                            /* :: */[
-                              x2,
-                              /* :: */[
-                                x3,
-                                /* [] */0
-                              ]
-                            ]
-                          ];
-                  } else {
-                    var c$2 = Curry._2(cmp, x1, x3);
-                    if (c$2) {
-                      if (c$2 < 0) {
-                        return /* :: */[
-                                x1,
-                                /* :: */[
-                                  x3,
-                                  /* :: */[
-                                    x2,
-                                    /* [] */0
-                                  ]
-                                ]
-                              ];
-                      } else {
-                        return /* :: */[
-                                x3,
-                                /* :: */[
-                                  x1,
-                                  /* :: */[
-                                    x2,
-                                    /* [] */0
-                                  ]
-                                ]
-                              ];
-                      }
-                    } else {
-                      return /* :: */[
-                              x1,
-                              /* :: */[
-                                x2,
-                                /* [] */0
-                              ]
-                            ];
-                    }
-                  }
-                } else {
+            if (c === 0) {
+              var c$1 = Curry._2(cmp, x2, x3);
+              if (c$1 === 0) {
+                return /* :: */[
+                        x2,
+                        /* [] */0
+                      ];
+              } else if (c$1 < 0) {
+                return /* :: */[
+                        x2,
+                        /* :: */[
+                          x3,
+                          /* [] */0
+                        ]
+                      ];
+              } else {
+                return /* :: */[
+                        x3,
+                        /* :: */[
+                          x2,
+                          /* [] */0
+                        ]
+                      ];
+              }
+            } else if (c < 0) {
+              var c$2 = Curry._2(cmp, x2, x3);
+              if (c$2 === 0) {
+                return /* :: */[
+                        x1,
+                        /* :: */[
+                          x2,
+                          /* [] */0
+                        ]
+                      ];
+              } else if (c$2 < 0) {
+                return /* :: */[
+                        x1,
+                        /* :: */[
+                          x2,
+                          /* :: */[
+                            x3,
+                            /* [] */0
+                          ]
+                        ]
+                      ];
+              } else {
+                var c$3 = Curry._2(cmp, x1, x3);
+                if (c$3 === 0) {
                   return /* :: */[
                           x1,
                           /* :: */[
@@ -2778,58 +2625,54 @@ function sort_uniq(cmp, l) {
                             /* [] */0
                           ]
                         ];
-                }
-              } else {
-                var c$3 = Curry._2(cmp, x1, x3);
-                if (c$3) {
-                  if (c$3 < 0) {
-                    return /* :: */[
-                            x2,
+                } else if (c$3 < 0) {
+                  return /* :: */[
+                          x1,
+                          /* :: */[
+                            x3,
                             /* :: */[
-                              x1,
-                              /* :: */[
-                                x3,
-                                /* [] */0
-                              ]
-                            ]
-                          ];
-                  } else {
-                    var c$4 = Curry._2(cmp, x2, x3);
-                    if (c$4) {
-                      if (c$4 < 0) {
-                        return /* :: */[
-                                x2,
-                                /* :: */[
-                                  x3,
-                                  /* :: */[
-                                    x1,
-                                    /* [] */0
-                                  ]
-                                ]
-                              ];
-                      } else {
-                        return /* :: */[
-                                x3,
-                                /* :: */[
-                                  x2,
-                                  /* :: */[
-                                    x1,
-                                    /* [] */0
-                                  ]
-                                ]
-                              ];
-                      }
-                    } else {
-                      return /* :: */[
                               x2,
-                              /* :: */[
-                                x1,
-                                /* [] */0
-                              ]
-                            ];
-                    }
-                  }
+                              /* [] */0
+                            ]
+                          ]
+                        ];
                 } else {
+                  return /* :: */[
+                          x3,
+                          /* :: */[
+                            x1,
+                            /* :: */[
+                              x2,
+                              /* [] */0
+                            ]
+                          ]
+                        ];
+                }
+              }
+            } else {
+              var c$4 = Curry._2(cmp, x1, x3);
+              if (c$4 === 0) {
+                return /* :: */[
+                        x2,
+                        /* :: */[
+                          x1,
+                          /* [] */0
+                        ]
+                      ];
+              } else if (c$4 < 0) {
+                return /* :: */[
+                        x2,
+                        /* :: */[
+                          x1,
+                          /* :: */[
+                            x3,
+                            /* [] */0
+                          ]
+                        ]
+                      ];
+              } else {
+                var c$5 = Curry._2(cmp, x2, x3);
+                if (c$5 === 0) {
                   return /* :: */[
                           x2,
                           /* :: */[
@@ -2837,17 +2680,15 @@ function sort_uniq(cmp, l) {
                             /* [] */0
                           ]
                         ];
-                }
-              }
-            } else {
-              var c$5 = Curry._2(cmp, x2, x3);
-              if (c$5) {
-                if (c$5 < 0) {
+                } else if (c$5 < 0) {
                   return /* :: */[
                           x2,
                           /* :: */[
                             x3,
-                            /* [] */0
+                            /* :: */[
+                              x1,
+                              /* [] */0
+                            ]
                           ]
                         ];
                 } else {
@@ -2855,15 +2696,13 @@ function sort_uniq(cmp, l) {
                           x3,
                           /* :: */[
                             x2,
-                            /* [] */0
+                            /* :: */[
+                              x1,
+                              /* [] */0
+                            ]
                           ]
                         ];
                 }
-              } else {
-                return /* :: */[
-                        x2,
-                        /* [] */0
-                      ];
               }
             }
           } else {
@@ -2872,8 +2711,6 @@ function sort_uniq(cmp, l) {
         } else {
           exit = 1;
         }
-      } else {
-        exit = 1;
       }
     } else if (l) {
       var match$2 = l[1];
@@ -2881,28 +2718,26 @@ function sort_uniq(cmp, l) {
         var x2$1 = match$2[0];
         var x1$1 = l[0];
         var c$6 = Curry._2(cmp, x1$1, x2$1);
-        if (c$6) {
-          if (c$6 < 0) {
-            return /* :: */[
-                    x1$1,
-                    /* :: */[
-                      x2$1,
-                      /* [] */0
-                    ]
-                  ];
-          } else {
-            return /* :: */[
-                    x2$1,
-                    /* :: */[
-                      x1$1,
-                      /* [] */0
-                    ]
-                  ];
-          }
-        } else {
+        if (c$6 === 0) {
           return /* :: */[
                   x1$1,
                   /* [] */0
+                ];
+        } else if (c$6 < 0) {
+          return /* :: */[
+                  x1$1,
+                  /* :: */[
+                    x2$1,
+                    /* [] */0
+                  ]
+                ];
+        } else {
+          return /* :: */[
+                  x2$1,
+                  /* :: */[
+                    x1$1,
+                    /* [] */0
+                  ]
                 ];
         }
       } else {
@@ -2931,25 +2766,7 @@ function sort_uniq(cmp, l) {
             var t1 = l1[1];
             var h1 = l1[0];
             var c$7 = Curry._2(cmp, h1, h2);
-            if (c$7) {
-              if (c$7 > 0) {
-                _accu = /* :: */[
-                  h1,
-                  accu
-                ];
-                _l1 = t1;
-                continue ;
-                
-              } else {
-                _accu = /* :: */[
-                  h2,
-                  accu
-                ];
-                _l2 = t2;
-                continue ;
-                
-              }
-            } else {
+            if (c$7 === 0) {
               _accu = /* :: */[
                 h1,
                 accu
@@ -2957,7 +2774,20 @@ function sort_uniq(cmp, l) {
               _l2 = t2;
               _l1 = t1;
               continue ;
-              
+            } else if (c$7 > 0) {
+              _accu = /* :: */[
+                h1,
+                accu
+              ];
+              _l1 = t1;
+              continue ;
+            } else {
+              _accu = /* :: */[
+                h2,
+                accu
+              ];
+              _l2 = t2;
+              continue ;
             }
           } else {
             return rev_append(l1, accu);
@@ -2972,9 +2802,9 @@ function sort_uniq(cmp, l) {
   var rev_sort = function (n, l) {
     var exit = 0;
     if (n !== 2) {
-      if (n !== 3) {
+      if (n !== 3 || !l) {
         exit = 1;
-      } else if (l) {
+      } else {
         var match = l[1];
         if (match) {
           var match$1 = match[1];
@@ -2983,58 +2813,54 @@ function sort_uniq(cmp, l) {
             var x2 = match[0];
             var x1 = l[0];
             var c = Curry._2(cmp, x1, x2);
-            if (c) {
-              if (c > 0) {
-                var c$1 = Curry._2(cmp, x2, x3);
-                if (c$1) {
-                  if (c$1 > 0) {
-                    return /* :: */[
-                            x1,
-                            /* :: */[
-                              x2,
-                              /* :: */[
-                                x3,
-                                /* [] */0
-                              ]
-                            ]
-                          ];
-                  } else {
-                    var c$2 = Curry._2(cmp, x1, x3);
-                    if (c$2) {
-                      if (c$2 > 0) {
-                        return /* :: */[
-                                x1,
-                                /* :: */[
-                                  x3,
-                                  /* :: */[
-                                    x2,
-                                    /* [] */0
-                                  ]
-                                ]
-                              ];
-                      } else {
-                        return /* :: */[
-                                x3,
-                                /* :: */[
-                                  x1,
-                                  /* :: */[
-                                    x2,
-                                    /* [] */0
-                                  ]
-                                ]
-                              ];
-                      }
-                    } else {
-                      return /* :: */[
-                              x1,
-                              /* :: */[
-                                x2,
-                                /* [] */0
-                              ]
-                            ];
-                    }
-                  }
-                } else {
+            if (c === 0) {
+              var c$1 = Curry._2(cmp, x2, x3);
+              if (c$1 === 0) {
+                return /* :: */[
+                        x2,
+                        /* [] */0
+                      ];
+              } else if (c$1 > 0) {
+                return /* :: */[
+                        x2,
+                        /* :: */[
+                          x3,
+                          /* [] */0
+                        ]
+                      ];
+              } else {
+                return /* :: */[
+                        x3,
+                        /* :: */[
+                          x2,
+                          /* [] */0
+                        ]
+                      ];
+              }
+            } else if (c > 0) {
+              var c$2 = Curry._2(cmp, x2, x3);
+              if (c$2 === 0) {
+                return /* :: */[
+                        x1,
+                        /* :: */[
+                          x2,
+                          /* [] */0
+                        ]
+                      ];
+              } else if (c$2 > 0) {
+                return /* :: */[
+                        x1,
+                        /* :: */[
+                          x2,
+                          /* :: */[
+                            x3,
+                            /* [] */0
+                          ]
+                        ]
+                      ];
+              } else {
+                var c$3 = Curry._2(cmp, x1, x3);
+                if (c$3 === 0) {
                   return /* :: */[
                           x1,
                           /* :: */[
@@ -3042,58 +2868,54 @@ function sort_uniq(cmp, l) {
                             /* [] */0
                           ]
                         ];
-                }
-              } else {
-                var c$3 = Curry._2(cmp, x1, x3);
-                if (c$3) {
-                  if (c$3 > 0) {
-                    return /* :: */[
-                            x2,
+                } else if (c$3 > 0) {
+                  return /* :: */[
+                          x1,
+                          /* :: */[
+                            x3,
                             /* :: */[
-                              x1,
-                              /* :: */[
-                                x3,
-                                /* [] */0
-                              ]
-                            ]
-                          ];
-                  } else {
-                    var c$4 = Curry._2(cmp, x2, x3);
-                    if (c$4) {
-                      if (c$4 > 0) {
-                        return /* :: */[
-                                x2,
-                                /* :: */[
-                                  x3,
-                                  /* :: */[
-                                    x1,
-                                    /* [] */0
-                                  ]
-                                ]
-                              ];
-                      } else {
-                        return /* :: */[
-                                x3,
-                                /* :: */[
-                                  x2,
-                                  /* :: */[
-                                    x1,
-                                    /* [] */0
-                                  ]
-                                ]
-                              ];
-                      }
-                    } else {
-                      return /* :: */[
                               x2,
-                              /* :: */[
-                                x1,
-                                /* [] */0
-                              ]
-                            ];
-                    }
-                  }
+                              /* [] */0
+                            ]
+                          ]
+                        ];
                 } else {
+                  return /* :: */[
+                          x3,
+                          /* :: */[
+                            x1,
+                            /* :: */[
+                              x2,
+                              /* [] */0
+                            ]
+                          ]
+                        ];
+                }
+              }
+            } else {
+              var c$4 = Curry._2(cmp, x1, x3);
+              if (c$4 === 0) {
+                return /* :: */[
+                        x2,
+                        /* :: */[
+                          x1,
+                          /* [] */0
+                        ]
+                      ];
+              } else if (c$4 > 0) {
+                return /* :: */[
+                        x2,
+                        /* :: */[
+                          x1,
+                          /* :: */[
+                            x3,
+                            /* [] */0
+                          ]
+                        ]
+                      ];
+              } else {
+                var c$5 = Curry._2(cmp, x2, x3);
+                if (c$5 === 0) {
                   return /* :: */[
                           x2,
                           /* :: */[
@@ -3101,17 +2923,15 @@ function sort_uniq(cmp, l) {
                             /* [] */0
                           ]
                         ];
-                }
-              }
-            } else {
-              var c$5 = Curry._2(cmp, x2, x3);
-              if (c$5) {
-                if (c$5 > 0) {
+                } else if (c$5 > 0) {
                   return /* :: */[
                           x2,
                           /* :: */[
                             x3,
-                            /* [] */0
+                            /* :: */[
+                              x1,
+                              /* [] */0
+                            ]
                           ]
                         ];
                 } else {
@@ -3119,15 +2939,13 @@ function sort_uniq(cmp, l) {
                           x3,
                           /* :: */[
                             x2,
-                            /* [] */0
+                            /* :: */[
+                              x1,
+                              /* [] */0
+                            ]
                           ]
                         ];
                 }
-              } else {
-                return /* :: */[
-                        x2,
-                        /* [] */0
-                      ];
               }
             }
           } else {
@@ -3136,8 +2954,6 @@ function sort_uniq(cmp, l) {
         } else {
           exit = 1;
         }
-      } else {
-        exit = 1;
       }
     } else if (l) {
       var match$2 = l[1];
@@ -3145,28 +2961,26 @@ function sort_uniq(cmp, l) {
         var x2$1 = match$2[0];
         var x1$1 = l[0];
         var c$6 = Curry._2(cmp, x1$1, x2$1);
-        if (c$6) {
-          if (c$6 > 0) {
-            return /* :: */[
-                    x1$1,
-                    /* :: */[
-                      x2$1,
-                      /* [] */0
-                    ]
-                  ];
-          } else {
-            return /* :: */[
-                    x2$1,
-                    /* :: */[
-                      x1$1,
-                      /* [] */0
-                    ]
-                  ];
-          }
-        } else {
+        if (c$6 === 0) {
           return /* :: */[
                   x1$1,
                   /* [] */0
+                ];
+        } else if (c$6 > 0) {
+          return /* :: */[
+                  x1$1,
+                  /* :: */[
+                    x2$1,
+                    /* [] */0
+                  ]
+                ];
+        } else {
+          return /* :: */[
+                  x2$1,
+                  /* :: */[
+                    x1$1,
+                    /* [] */0
+                  ]
                 ];
         }
       } else {
@@ -3195,25 +3009,7 @@ function sort_uniq(cmp, l) {
             var t1 = l1[1];
             var h1 = l1[0];
             var c$7 = Curry._2(cmp, h1, h2);
-            if (c$7) {
-              if (c$7 < 0) {
-                _accu = /* :: */[
-                  h1,
-                  accu
-                ];
-                _l1 = t1;
-                continue ;
-                
-              } else {
-                _accu = /* :: */[
-                  h2,
-                  accu
-                ];
-                _l2 = t2;
-                continue ;
-                
-              }
-            } else {
+            if (c$7 === 0) {
               _accu = /* :: */[
                 h1,
                 accu
@@ -3221,7 +3017,20 @@ function sort_uniq(cmp, l) {
               _l2 = t2;
               _l1 = t1;
               continue ;
-              
+            } else if (c$7 < 0) {
+              _accu = /* :: */[
+                h1,
+                accu
+              ];
+              _l1 = t1;
+              continue ;
+            } else {
+              _accu = /* :: */[
+                h2,
+                accu
+              ];
+              _l2 = t2;
+              continue ;
             }
           } else {
             return rev_append(l1, accu);
@@ -3251,50 +3060,50 @@ var sort = stable_sort;
 
 var fast_sort = stable_sort;
 
-exports.length       = length;
-exports.hd           = hd;
-exports.tl           = tl;
-exports.nth          = nth;
-exports.rev          = rev;
-exports.append       = append;
-exports.rev_append   = rev_append;
-exports.concat       = concat;
-exports.flatten      = flatten;
-exports.iter         = iter;
-exports.iteri        = iteri;
-exports.map          = map;
-exports.mapi         = mapi$1;
-exports.rev_map      = rev_map;
-exports.fold_left    = fold_left;
-exports.fold_right   = fold_right;
-exports.iter2        = iter2;
-exports.map2         = map2;
-exports.rev_map2     = rev_map2;
-exports.fold_left2   = fold_left2;
-exports.fold_right2  = fold_right2;
-exports.for_all      = for_all;
-exports.exists       = exists;
-exports.for_all2     = for_all2;
-exports.exists2      = exists2;
-exports.mem          = mem;
-exports.memq         = memq;
-exports.find         = find;
-exports.filter       = filter;
-exports.find_all     = find_all;
-exports.partition    = partition;
-exports.assoc        = assoc;
-exports.assq         = assq;
-exports.mem_assoc    = mem_assoc;
-exports.mem_assq     = mem_assq;
+exports.length = length;
+exports.hd = hd;
+exports.tl = tl;
+exports.nth = nth;
+exports.rev = rev;
+exports.append = append;
+exports.rev_append = rev_append;
+exports.concat = concat;
+exports.flatten = flatten;
+exports.iter = iter;
+exports.iteri = iteri;
+exports.map = map;
+exports.mapi = mapi$1;
+exports.rev_map = rev_map;
+exports.fold_left = fold_left;
+exports.fold_right = fold_right;
+exports.iter2 = iter2;
+exports.map2 = map2;
+exports.rev_map2 = rev_map2;
+exports.fold_left2 = fold_left2;
+exports.fold_right2 = fold_right2;
+exports.for_all = for_all;
+exports.exists = exists;
+exports.for_all2 = for_all2;
+exports.exists2 = exists2;
+exports.mem = mem;
+exports.memq = memq;
+exports.find = find;
+exports.filter = filter;
+exports.find_all = find_all;
+exports.partition = partition;
+exports.assoc = assoc;
+exports.assq = assq;
+exports.mem_assoc = mem_assoc;
+exports.mem_assq = mem_assq;
 exports.remove_assoc = remove_assoc;
-exports.remove_assq  = remove_assq;
-exports.split        = split;
-exports.combine      = combine;
-exports.sort         = sort;
-exports.stable_sort  = stable_sort;
-exports.fast_sort    = fast_sort;
-exports.sort_uniq    = sort_uniq;
-exports.merge        = merge;
+exports.remove_assq = remove_assq;
+exports.split = split;
+exports.combine = combine;
+exports.sort = sort;
+exports.stable_sort = stable_sort;
+exports.fast_sort = fast_sort;
+exports.sort_uniq = sort_uniq;
+exports.merge = merge;
 /* No side effect */
 
 
@@ -3305,697 +3114,437 @@ exports.merge        = merge;
 "use strict";
 
 
-var Curry                    = __webpack_require__(2);
-var Caml_io                  = __webpack_require__(19);
-var Caml_obj                 = __webpack_require__(3);
-var Caml_sys                 = __webpack_require__(20);
-var Caml_format              = __webpack_require__(21);
-var Caml_string              = __webpack_require__(5);
-var Caml_exceptions          = __webpack_require__(23);
-var Caml_missing_polyfill    = __webpack_require__(24);
-var Caml_builtin_exceptions  = __webpack_require__(0);
-var CamlinternalFormatBasics = __webpack_require__(25);
+var Block = __webpack_require__(7);
+var Caml_primitive = __webpack_require__(3);
+var Caml_builtin_exceptions = __webpack_require__(0);
 
-function failwith(s) {
-  throw [
-        Caml_builtin_exceptions.failure,
-        s
-      ];
+function caml_obj_block(tag, size) {
+  var v = new Array(size);
+  v.tag = tag;
+  return v;
 }
 
-function invalid_arg(s) {
-  throw [
-        Caml_builtin_exceptions.invalid_argument,
-        s
-      ];
-}
-
-var Exit = Caml_exceptions.create("Pervasives.Exit");
-
-function min(x, y) {
-  if (Caml_obj.caml_lessequal(x, y)) {
-    return x;
-  } else {
-    return y;
+function caml_obj_dup(x) {
+  var len = x.length | 0;
+  var v = new Array(len);
+  for(var i = 0 ,i_finish = len - 1 | 0; i <= i_finish; ++i){
+    v[i] = x[i];
   }
+  v.tag = x.tag | 0;
+  return v;
 }
 
-function max(x, y) {
-  if (Caml_obj.caml_greaterequal(x, y)) {
-    return x;
-  } else {
-    return y;
-  }
-}
-
-function abs(x) {
-  if (x >= 0) {
-    return x;
-  } else {
-    return -x | 0;
-  }
-}
-
-function lnot(x) {
-  return x ^ -1;
-}
-
-var min_int = -2147483648;
-
-function $caret(a, b) {
-  return a + b;
-}
-
-function char_of_int(n) {
-  if (n < 0 || n > 255) {
+function caml_obj_truncate(x, new_size) {
+  var len = x.length | 0;
+  if (new_size <= 0 || new_size > len) {
     throw [
           Caml_builtin_exceptions.invalid_argument,
-          "char_of_int"
+          "Obj.truncate"
         ];
-  } else {
-    return n;
-  }
-}
-
-function string_of_bool(b) {
-  if (b) {
-    return "true";
-  } else {
-    return "false";
-  }
-}
-
-function bool_of_string(param) {
-  switch (param) {
-    case "false" : 
-        return /* false */0;
-    case "true" : 
-        return /* true */1;
-    default:
-      throw [
-            Caml_builtin_exceptions.invalid_argument,
-            "bool_of_string"
-          ];
-  }
-}
-
-function string_of_int(param) {
-  return "" + param;
-}
-
-function valid_float_lexem(s) {
-  var l = s.length;
-  var _i = 0;
-  while(true) {
-    var i = _i;
-    if (i >= l) {
-      return $caret(s, ".");
-    } else {
-      var match = Caml_string.get(s, i);
-      if (match >= 48) {
-        if (match >= 58) {
-          return s;
-        } else {
-          _i = i + 1 | 0;
-          continue ;
-          
-        }
-      } else if (match !== 45) {
-        return s;
-      } else {
-        _i = i + 1 | 0;
-        continue ;
-        
-      }
+  } else if (len !== new_size) {
+    for(var i = new_size ,i_finish = len - 1 | 0; i <= i_finish; ++i){
+      x[i] = 0;
     }
-  };
-}
-
-function string_of_float(f) {
-  return valid_float_lexem(Caml_format.caml_format_float("%.12g", f));
-}
-
-function $at(l1, l2) {
-  if (l1) {
-    return /* :: */[
-            l1[0],
-            $at(l1[1], l2)
-          ];
-  } else {
-    return l2;
-  }
-}
-
-var stdin = Caml_io.stdin;
-
-var stdout = Caml_io.stdout;
-
-var stderr = Caml_io.stderr;
-
-function open_out_gen(_, _$1, _$2) {
-  return Caml_io.caml_ml_open_descriptor_out(Caml_missing_polyfill.not_implemented("caml_sys_open not implemented by bucklescript yet\n"));
-}
-
-function open_out(name) {
-  return open_out_gen(/* :: */[
-              /* Open_wronly */1,
-              /* :: */[
-                /* Open_creat */3,
-                /* :: */[
-                  /* Open_trunc */4,
-                  /* :: */[
-                    /* Open_text */7,
-                    /* [] */0
-                  ]
-                ]
-              ]
-            ], 438, name);
-}
-
-function open_out_bin(name) {
-  return open_out_gen(/* :: */[
-              /* Open_wronly */1,
-              /* :: */[
-                /* Open_creat */3,
-                /* :: */[
-                  /* Open_trunc */4,
-                  /* :: */[
-                    /* Open_binary */6,
-                    /* [] */0
-                  ]
-                ]
-              ]
-            ], 438, name);
-}
-
-function flush_all() {
-  var _param = Caml_io.caml_ml_out_channels_list(/* () */0);
-  while(true) {
-    var param = _param;
-    if (param) {
-      try {
-        Caml_io.caml_ml_flush(param[0]);
-      }
-      catch (exn){
-        
-      }
-      _param = param[1];
-      continue ;
-      
-    } else {
-      return /* () */0;
-    }
-  };
-}
-
-function output_bytes(oc, s) {
-  return Caml_io.caml_ml_output(oc, s, 0, s.length);
-}
-
-function output_string(oc, s) {
-  return Caml_io.caml_ml_output(oc, s, 0, s.length);
-}
-
-function output(oc, s, ofs, len) {
-  if (ofs < 0 || len < 0 || ofs > (s.length - len | 0)) {
-    throw [
-          Caml_builtin_exceptions.invalid_argument,
-          "output"
-        ];
-  } else {
-    return Caml_io.caml_ml_output(oc, s, ofs, len);
-  }
-}
-
-function output_substring(oc, s, ofs, len) {
-  if (ofs < 0 || len < 0 || ofs > (s.length - len | 0)) {
-    throw [
-          Caml_builtin_exceptions.invalid_argument,
-          "output_substring"
-        ];
-  } else {
-    return Caml_io.caml_ml_output(oc, s, ofs, len);
-  }
-}
-
-function output_value(_, _$1) {
-  return Caml_missing_polyfill.not_implemented("caml_output_value not implemented by bucklescript yet\n");
-}
-
-function close_out(oc) {
-  Caml_io.caml_ml_flush(oc);
-  return Caml_missing_polyfill.not_implemented("caml_ml_close_channel not implemented by bucklescript yet\n");
-}
-
-function close_out_noerr(oc) {
-  try {
-    Caml_io.caml_ml_flush(oc);
-  }
-  catch (exn){
-    
-  }
-  try {
-    return Caml_missing_polyfill.not_implemented("caml_ml_close_channel not implemented by bucklescript yet\n");
-  }
-  catch (exn$1){
+    x.length = new_size;
     return /* () */0;
-  }
-}
-
-function open_in_gen(_, _$1, _$2) {
-  return Caml_io.caml_ml_open_descriptor_in(Caml_missing_polyfill.not_implemented("caml_sys_open not implemented by bucklescript yet\n"));
-}
-
-function open_in(name) {
-  return open_in_gen(/* :: */[
-              /* Open_rdonly */0,
-              /* :: */[
-                /* Open_text */7,
-                /* [] */0
-              ]
-            ], 0, name);
-}
-
-function open_in_bin(name) {
-  return open_in_gen(/* :: */[
-              /* Open_rdonly */0,
-              /* :: */[
-                /* Open_binary */6,
-                /* [] */0
-              ]
-            ], 0, name);
-}
-
-function input(_, s, ofs, len) {
-  if (ofs < 0 || len < 0 || ofs > (s.length - len | 0)) {
-    throw [
-          Caml_builtin_exceptions.invalid_argument,
-          "input"
-        ];
   } else {
-    return Caml_missing_polyfill.not_implemented("caml_ml_input not implemented by bucklescript yet\n");
+    return 0;
   }
 }
 
-function unsafe_really_input(_, _$1, _ofs, _len) {
+function caml_lazy_make_forward(x) {
+  return Block.__(250, [x]);
+}
+
+function caml_update_dummy(x, y) {
+  var len = y.length | 0;
+  for(var i = 0 ,i_finish = len - 1 | 0; i <= i_finish; ++i){
+    x[i] = y[i];
+  }
+  var y_tag = y.tag | 0;
+  if (y_tag !== 0) {
+    x.tag = y_tag;
+    return /* () */0;
+  } else {
+    return 0;
+  }
+}
+
+var for_in = function (o,foo){
+        for (var x in o) { foo(x) }
+      };
+
+function caml_compare(_a, _b) {
   while(true) {
-    var len = _len;
-    var ofs = _ofs;
-    if (len <= 0) {
-      return /* () */0;
+    var b = _b;
+    var a = _a;
+    if (a === b) {
+      return 0;
+    } else if (a === null) {
+      return -1;
+    } else if (b === null) {
+      return 1;
+    } else if (a === undefined) {
+      return -1;
+    } else if (b === undefined) {
+      return 1;
     } else {
-      var r = Caml_missing_polyfill.not_implemented("caml_ml_input not implemented by bucklescript yet\n");
-      if (r) {
-        _len = len - r | 0;
-        _ofs = ofs + r | 0;
-        continue ;
-        
+      var a_type = typeof a;
+      var b_type = typeof b;
+      if (a_type === "string") {
+        return Caml_primitive.caml_string_compare(a, b);
       } else {
-        throw Caml_builtin_exceptions.end_of_file;
-      }
-    }
-  };
-}
-
-function really_input(ic, s, ofs, len) {
-  if (ofs < 0 || len < 0 || ofs > (s.length - len | 0)) {
-    throw [
-          Caml_builtin_exceptions.invalid_argument,
-          "really_input"
-        ];
-  } else {
-    return unsafe_really_input(ic, s, ofs, len);
-  }
-}
-
-function really_input_string(ic, len) {
-  var s = Caml_string.caml_create_string(len);
-  really_input(ic, s, 0, len);
-  return Caml_string.bytes_to_string(s);
-}
-
-function input_line(chan) {
-  var build_result = function (buf, _pos, _param) {
-    while(true) {
-      var param = _param;
-      var pos = _pos;
-      if (param) {
-        var hd = param[0];
-        var len = hd.length;
-        Caml_string.caml_blit_bytes(hd, 0, buf, pos - len | 0, len);
-        _param = param[1];
-        _pos = pos - len | 0;
-        continue ;
-        
-      } else {
-        return buf;
-      }
-    };
-  };
-  var scan = function (_accu, _len) {
-    while(true) {
-      var len = _len;
-      var accu = _accu;
-      var n = Caml_missing_polyfill.not_implemented("caml_ml_input_scan_line not implemented by bucklescript yet\n");
-      if (n) {
-        if (n > 0) {
-          var res = Caml_string.caml_create_string(n - 1 | 0);
-          Caml_missing_polyfill.not_implemented("caml_ml_input not implemented by bucklescript yet\n");
-          Caml_io.caml_ml_input_char(chan);
-          if (accu) {
-            var len$1 = (len + n | 0) - 1 | 0;
-            return build_result(Caml_string.caml_create_string(len$1), len$1, /* :: */[
-                        res,
-                        accu
-                      ]);
+        var is_a_number = a_type === "number";
+        var is_b_number = b_type === "number";
+        if (is_a_number) {
+          if (is_b_number) {
+            return Caml_primitive.caml_int_compare(a, b);
           } else {
-            return res;
+            return -1;
           }
+        } else if (is_b_number) {
+          return 1;
+        } else if (a_type === "boolean") {
+          var x = a;
+          var y = b;
+          if (x === y) {
+            return 0;
+          } else if (x < y) {
+            return -1;
+          } else {
+            return 1;
+          }
+        } else if (a_type === "function" || b_type === "function") {
+          throw [
+                Caml_builtin_exceptions.invalid_argument,
+                "compare: functional value"
+              ];
         } else {
-          var beg = Caml_string.caml_create_string(-n | 0);
-          Caml_missing_polyfill.not_implemented("caml_ml_input not implemented by bucklescript yet\n");
-          _len = len - n | 0;
-          _accu = /* :: */[
-            beg,
-            accu
-          ];
-          continue ;
-          
+          var tag_a = a.tag | 0;
+          var tag_b = b.tag | 0;
+          if (tag_a === 250) {
+            _a = a[0];
+            continue ;
+          } else if (tag_b === 250) {
+            _b = b[0];
+            continue ;
+          } else if (tag_a === 248) {
+            return Caml_primitive.caml_int_compare(a[1], b[1]);
+          } else if (tag_a === 251) {
+            throw [
+                  Caml_builtin_exceptions.invalid_argument,
+                  "equal: abstract value"
+                ];
+          } else if (tag_a !== tag_b) {
+            if (tag_a < tag_b) {
+              return -1;
+            } else {
+              return 1;
+            }
+          } else {
+            var len_a = a.length | 0;
+            var len_b = b.length | 0;
+            if (len_a === len_b) {
+              if (Array.isArray(a)) {
+                var a$1 = a;
+                var b$1 = b;
+                var _i = 0;
+                var same_length = len_a;
+                while(true) {
+                  var i = _i;
+                  if (i === same_length) {
+                    return 0;
+                  } else {
+                    var res = caml_compare(a$1[i], b$1[i]);
+                    if (res !== 0) {
+                      return res;
+                    } else {
+                      _i = i + 1 | 0;
+                      continue ;
+                    }
+                  }
+                };
+              } else {
+                var a$2 = a;
+                var b$2 = b;
+                var min_key_lhs = [/* None */0];
+                var min_key_rhs = [/* None */0];
+                var do_key = function (param, key) {
+                  var min_key = param[2];
+                  var b = param[1];
+                  if (!b.hasOwnProperty(key) || caml_compare(param[0][key], b[key]) > 0) {
+                    var match = min_key[0];
+                    if (match) {
+                      if (key < match[0]) {
+                        min_key[0] = /* Some */[key];
+                        return /* () */0;
+                      } else {
+                        return 0;
+                      }
+                    } else {
+                      min_key[0] = /* Some */[key];
+                      return /* () */0;
+                    }
+                  } else {
+                    return 0;
+                  }
+                };
+                var partial_arg = /* tuple */[
+                  a$2,
+                  b$2,
+                  min_key_rhs
+                ];
+                var do_key_a = (function(partial_arg){
+                return function do_key_a(param) {
+                  return do_key(partial_arg, param);
+                }
+                }(partial_arg));
+                var partial_arg$1 = /* tuple */[
+                  b$2,
+                  a$2,
+                  min_key_lhs
+                ];
+                var do_key_b = (function(partial_arg$1){
+                return function do_key_b(param) {
+                  return do_key(partial_arg$1, param);
+                }
+                }(partial_arg$1));
+                for_in(a$2, do_key_a);
+                for_in(b$2, do_key_b);
+                var match = min_key_lhs[0];
+                var match$1 = min_key_rhs[0];
+                if (match) {
+                  if (match$1) {
+                    return Caml_primitive.caml_string_compare(match[0], match$1[0]);
+                  } else {
+                    return -1;
+                  }
+                } else if (match$1) {
+                  return 1;
+                } else {
+                  return 0;
+                }
+              }
+            } else if (len_a < len_b) {
+              var a$3 = a;
+              var b$3 = b;
+              var _i$1 = 0;
+              var short_length = len_a;
+              while(true) {
+                var i$1 = _i$1;
+                if (i$1 === short_length) {
+                  return -1;
+                } else {
+                  var res$1 = caml_compare(a$3[i$1], b$3[i$1]);
+                  if (res$1 !== 0) {
+                    return res$1;
+                  } else {
+                    _i$1 = i$1 + 1 | 0;
+                    continue ;
+                  }
+                }
+              };
+            } else {
+              var a$4 = a;
+              var b$4 = b;
+              var _i$2 = 0;
+              var short_length$1 = len_b;
+              while(true) {
+                var i$2 = _i$2;
+                if (i$2 === short_length$1) {
+                  return 1;
+                } else {
+                  var res$2 = caml_compare(a$4[i$2], b$4[i$2]);
+                  if (res$2 !== 0) {
+                    return res$2;
+                  } else {
+                    _i$2 = i$2 + 1 | 0;
+                    continue ;
+                  }
+                }
+              };
+            }
+          }
         }
-      } else if (accu) {
-        return build_result(Caml_string.caml_create_string(len), len, accu);
-      } else {
-        throw Caml_builtin_exceptions.end_of_file;
       }
-    };
+    }
   };
-  return Caml_string.bytes_to_string(scan(/* [] */0, 0));
 }
 
-function close_in_noerr() {
-  try {
-    return Caml_missing_polyfill.not_implemented("caml_ml_close_channel not implemented by bucklescript yet\n");
+function caml_equal(_a, _b) {
+  while(true) {
+    var b = _b;
+    var a = _a;
+    if (a === b) {
+      return true;
+    } else {
+      var a_type = typeof a;
+      if (a_type === "string" || a_type === "number" || a_type === "boolean" || a_type === "undefined" || a === null) {
+        return false;
+      } else {
+        var b_type = typeof b;
+        if (a_type === "function" || b_type === "function") {
+          throw [
+                Caml_builtin_exceptions.invalid_argument,
+                "equal: functional value"
+              ];
+        } else if (b_type === "number" || b_type === "undefined" || b === null) {
+          return false;
+        } else {
+          var tag_a = a.tag | 0;
+          var tag_b = b.tag | 0;
+          if (tag_a === 250) {
+            _a = a[0];
+            continue ;
+          } else if (tag_b === 250) {
+            _b = b[0];
+            continue ;
+          } else if (tag_a === 248) {
+            return a[1] === b[1];
+          } else if (tag_a === 251) {
+            throw [
+                  Caml_builtin_exceptions.invalid_argument,
+                  "equal: abstract value"
+                ];
+          } else if (tag_a !== tag_b) {
+            return false;
+          } else {
+            var len_a = a.length | 0;
+            var len_b = b.length | 0;
+            if (len_a === len_b) {
+              if (Array.isArray(a)) {
+                var a$1 = a;
+                var b$1 = b;
+                var _i = 0;
+                var same_length = len_a;
+                while(true) {
+                  var i = _i;
+                  if (i === same_length) {
+                    return true;
+                  } else if (caml_equal(a$1[i], b$1[i])) {
+                    _i = i + 1 | 0;
+                    continue ;
+                  } else {
+                    return false;
+                  }
+                };
+              } else {
+                var a$2 = a;
+                var b$2 = b;
+                var result = [true];
+                var do_key_a = (function(b$2,result){
+                return function do_key_a(key) {
+                  if (b$2.hasOwnProperty(key)) {
+                    return 0;
+                  } else {
+                    result[0] = false;
+                    return /* () */0;
+                  }
+                }
+                }(b$2,result));
+                var do_key_b = (function(a$2,b$2,result){
+                return function do_key_b(key) {
+                  if (!a$2.hasOwnProperty(key) || !caml_equal(b$2[key], a$2[key])) {
+                    result[0] = false;
+                    return /* () */0;
+                  } else {
+                    return 0;
+                  }
+                }
+                }(a$2,b$2,result));
+                for_in(a$2, do_key_a);
+                if (result[0]) {
+                  for_in(b$2, do_key_b);
+                }
+                return result[0];
+              }
+            } else {
+              return false;
+            }
+          }
+        }
+      }
+    }
+  };
+}
+
+function caml_equal_null(x, y) {
+  if (y !== null) {
+    return caml_equal(x, y);
+  } else {
+    return x === y;
   }
-  catch (exn){
-    return /* () */0;
+}
+
+function caml_equal_undefined(x, y) {
+  if (y !== undefined) {
+    return caml_equal(x, y);
+  } else {
+    return x === y;
   }
 }
 
-function print_char(c) {
-  return Caml_io.caml_ml_output_char(stdout, c);
+function caml_equal_nullable(x, y) {
+  if (y == null) {
+    return x === y;
+  } else {
+    return caml_equal(x, y);
+  }
 }
 
-function print_string(s) {
-  return output_string(stdout, s);
+function caml_notequal(a, b) {
+  return !caml_equal(a, b);
 }
 
-function print_bytes(s) {
-  return output_bytes(stdout, s);
+function caml_greaterequal(a, b) {
+  return caml_compare(a, b) >= 0;
 }
 
-function print_int(i) {
-  return output_string(stdout, "" + i);
+function caml_greaterthan(a, b) {
+  return caml_compare(a, b) > 0;
 }
 
-function print_float(f) {
-  return output_string(stdout, valid_float_lexem(Caml_format.caml_format_float("%.12g", f)));
+function caml_lessequal(a, b) {
+  return caml_compare(a, b) <= 0;
 }
 
-function print_endline(param) {
-  console.log(param);
-  return 0;
+function caml_lessthan(a, b) {
+  return caml_compare(a, b) < 0;
 }
 
-function print_newline() {
-  Caml_io.caml_ml_output_char(stdout, /* "\n" */10);
-  return Caml_io.caml_ml_flush(stdout);
+function caml_min(x, y) {
+  if (caml_compare(x, y) <= 0) {
+    return x;
+  } else {
+    return y;
+  }
 }
 
-function prerr_char(c) {
-  return Caml_io.caml_ml_output_char(stderr, c);
+function caml_max(x, y) {
+  if (caml_compare(x, y) >= 0) {
+    return x;
+  } else {
+    return y;
+  }
 }
 
-function prerr_string(s) {
-  return output_string(stderr, s);
-}
-
-function prerr_bytes(s) {
-  return output_bytes(stderr, s);
-}
-
-function prerr_int(i) {
-  return output_string(stderr, "" + i);
-}
-
-function prerr_float(f) {
-  return output_string(stderr, valid_float_lexem(Caml_format.caml_format_float("%.12g", f)));
-}
-
-function prerr_endline(param) {
-  console.error(param);
-  return 0;
-}
-
-function prerr_newline() {
-  Caml_io.caml_ml_output_char(stderr, /* "\n" */10);
-  return Caml_io.caml_ml_flush(stderr);
-}
-
-function read_line() {
-  Caml_io.caml_ml_flush(stdout);
-  return input_line(stdin);
-}
-
-function read_int() {
-  return Caml_format.caml_int_of_string((Caml_io.caml_ml_flush(stdout), input_line(stdin)));
-}
-
-function read_float() {
-  return Caml_format.caml_float_of_string((Caml_io.caml_ml_flush(stdout), input_line(stdin)));
-}
-
-function string_of_format(param) {
-  return param[1];
-}
-
-function $caret$caret(param, param$1) {
-  return /* Format */[
-          CamlinternalFormatBasics.concat_fmt(param[0], param$1[0]),
-          $caret(param[1], $caret("%,", param$1[1]))
-        ];
-}
-
-var exit_function = [flush_all];
-
-function at_exit(f) {
-  var g = exit_function[0];
-  exit_function[0] = (function () {
-      Curry._1(f, /* () */0);
-      return Curry._1(g, /* () */0);
-    });
-  return /* () */0;
-}
-
-function do_at_exit() {
-  return Curry._1(exit_function[0], /* () */0);
-}
-
-function exit(retcode) {
-  do_at_exit(/* () */0);
-  return Caml_sys.caml_sys_exit(retcode);
-}
-
-var max_int = 2147483647;
-
-var infinity = Infinity;
-
-var neg_infinity = -Infinity;
-
-var nan = NaN;
-
-var max_float = Number.MAX_VALUE;
-
-var min_float = Number.MIN_VALUE;
-
-var epsilon_float = 2.220446049250313e-16;
-
-var flush = Caml_io.caml_ml_flush;
-
-var output_char = Caml_io.caml_ml_output_char;
-
-var output_byte = Caml_io.caml_ml_output_char;
-
-function output_binary_int(_, _$1) {
-  return Caml_missing_polyfill.not_implemented("caml_ml_output_int not implemented by bucklescript yet\n");
-}
-
-function seek_out(_, _$1) {
-  return Caml_missing_polyfill.not_implemented("caml_ml_seek_out not implemented by bucklescript yet\n");
-}
-
-function pos_out() {
-  return Caml_missing_polyfill.not_implemented("caml_ml_pos_out not implemented by bucklescript yet\n");
-}
-
-function out_channel_length() {
-  return Caml_missing_polyfill.not_implemented("caml_ml_channel_size not implemented by bucklescript yet\n");
-}
-
-function set_binary_mode_out(_, _$1) {
-  return Caml_missing_polyfill.not_implemented("caml_ml_set_binary_mode not implemented by bucklescript yet\n");
-}
-
-var input_char = Caml_io.caml_ml_input_char;
-
-var input_byte = Caml_io.caml_ml_input_char;
-
-function input_binary_int() {
-  return Caml_missing_polyfill.not_implemented("caml_ml_input_int not implemented by bucklescript yet\n");
-}
-
-function input_value() {
-  return Caml_missing_polyfill.not_implemented("caml_input_value not implemented by bucklescript yet\n");
-}
-
-function seek_in(_, _$1) {
-  return Caml_missing_polyfill.not_implemented("caml_ml_seek_in not implemented by bucklescript yet\n");
-}
-
-function pos_in() {
-  return Caml_missing_polyfill.not_implemented("caml_ml_pos_in not implemented by bucklescript yet\n");
-}
-
-function in_channel_length() {
-  return Caml_missing_polyfill.not_implemented("caml_ml_channel_size not implemented by bucklescript yet\n");
-}
-
-function close_in() {
-  return Caml_missing_polyfill.not_implemented("caml_ml_close_channel not implemented by bucklescript yet\n");
-}
-
-function set_binary_mode_in(_, _$1) {
-  return Caml_missing_polyfill.not_implemented("caml_ml_set_binary_mode not implemented by bucklescript yet\n");
-}
-
-function LargeFile_000(_, _$1) {
-  return Caml_missing_polyfill.not_implemented("caml_ml_seek_out_64 not implemented by bucklescript yet\n");
-}
-
-function LargeFile_001() {
-  return Caml_missing_polyfill.not_implemented("caml_ml_pos_out_64 not implemented by bucklescript yet\n");
-}
-
-function LargeFile_002() {
-  return Caml_missing_polyfill.not_implemented("caml_ml_channel_size_64 not implemented by bucklescript yet\n");
-}
-
-function LargeFile_003(_, _$1) {
-  return Caml_missing_polyfill.not_implemented("caml_ml_seek_in_64 not implemented by bucklescript yet\n");
-}
-
-function LargeFile_004() {
-  return Caml_missing_polyfill.not_implemented("caml_ml_pos_in_64 not implemented by bucklescript yet\n");
-}
-
-function LargeFile_005() {
-  return Caml_missing_polyfill.not_implemented("caml_ml_channel_size_64 not implemented by bucklescript yet\n");
-}
-
-var LargeFile = [
-  LargeFile_000,
-  LargeFile_001,
-  LargeFile_002,
-  LargeFile_003,
-  LargeFile_004,
-  LargeFile_005
-];
-
-exports.invalid_arg         = invalid_arg;
-exports.failwith            = failwith;
-exports.Exit                = Exit;
-exports.min                 = min;
-exports.max                 = max;
-exports.abs                 = abs;
-exports.max_int             = max_int;
-exports.min_int             = min_int;
-exports.lnot                = lnot;
-exports.infinity            = infinity;
-exports.neg_infinity        = neg_infinity;
-exports.nan                 = nan;
-exports.max_float           = max_float;
-exports.min_float           = min_float;
-exports.epsilon_float       = epsilon_float;
-exports.$caret              = $caret;
-exports.char_of_int         = char_of_int;
-exports.string_of_bool      = string_of_bool;
-exports.bool_of_string      = bool_of_string;
-exports.string_of_int       = string_of_int;
-exports.string_of_float     = string_of_float;
-exports.$at                 = $at;
-exports.stdin               = stdin;
-exports.stdout              = stdout;
-exports.stderr              = stderr;
-exports.print_char          = print_char;
-exports.print_string        = print_string;
-exports.print_bytes         = print_bytes;
-exports.print_int           = print_int;
-exports.print_float         = print_float;
-exports.print_endline       = print_endline;
-exports.print_newline       = print_newline;
-exports.prerr_char          = prerr_char;
-exports.prerr_string        = prerr_string;
-exports.prerr_bytes         = prerr_bytes;
-exports.prerr_int           = prerr_int;
-exports.prerr_float         = prerr_float;
-exports.prerr_endline       = prerr_endline;
-exports.prerr_newline       = prerr_newline;
-exports.read_line           = read_line;
-exports.read_int            = read_int;
-exports.read_float          = read_float;
-exports.open_out            = open_out;
-exports.open_out_bin        = open_out_bin;
-exports.open_out_gen        = open_out_gen;
-exports.flush               = flush;
-exports.flush_all           = flush_all;
-exports.output_char         = output_char;
-exports.output_string       = output_string;
-exports.output_bytes        = output_bytes;
-exports.output              = output;
-exports.output_substring    = output_substring;
-exports.output_byte         = output_byte;
-exports.output_binary_int   = output_binary_int;
-exports.output_value        = output_value;
-exports.seek_out            = seek_out;
-exports.pos_out             = pos_out;
-exports.out_channel_length  = out_channel_length;
-exports.close_out           = close_out;
-exports.close_out_noerr     = close_out_noerr;
-exports.set_binary_mode_out = set_binary_mode_out;
-exports.open_in             = open_in;
-exports.open_in_bin         = open_in_bin;
-exports.open_in_gen         = open_in_gen;
-exports.input_char          = input_char;
-exports.input_line          = input_line;
-exports.input               = input;
-exports.really_input        = really_input;
-exports.really_input_string = really_input_string;
-exports.input_byte          = input_byte;
-exports.input_binary_int    = input_binary_int;
-exports.input_value         = input_value;
-exports.seek_in             = seek_in;
-exports.pos_in              = pos_in;
-exports.in_channel_length   = in_channel_length;
-exports.close_in            = close_in;
-exports.close_in_noerr      = close_in_noerr;
-exports.set_binary_mode_in  = set_binary_mode_in;
-exports.LargeFile           = LargeFile;
-exports.string_of_format    = string_of_format;
-exports.$caret$caret        = $caret$caret;
-exports.exit                = exit;
-exports.at_exit             = at_exit;
-exports.valid_float_lexem   = valid_float_lexem;
-exports.unsafe_really_input = unsafe_really_input;
-exports.do_at_exit          = do_at_exit;
+exports.caml_obj_block = caml_obj_block;
+exports.caml_obj_dup = caml_obj_dup;
+exports.caml_obj_truncate = caml_obj_truncate;
+exports.caml_lazy_make_forward = caml_lazy_make_forward;
+exports.caml_update_dummy = caml_update_dummy;
+exports.caml_compare = caml_compare;
+exports.caml_equal = caml_equal;
+exports.caml_equal_null = caml_equal_null;
+exports.caml_equal_undefined = caml_equal_undefined;
+exports.caml_equal_nullable = caml_equal_nullable;
+exports.caml_notequal = caml_notequal;
+exports.caml_greaterequal = caml_greaterequal;
+exports.caml_greaterthan = caml_greaterthan;
+exports.caml_lessthan = caml_lessthan;
+exports.caml_lessequal = caml_lessequal;
+exports.caml_min = caml_min;
+exports.caml_max = caml_max;
 /* No side effect */
 
 
@@ -4042,10 +3591,9 @@ exports.repeat = repeat;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// Generated by BUCKLESCRIPT VERSION 2.1.0, PLEASE EDIT WITH CARE
 
 
-var BsBox    = __webpack_require__(12);
+var BsBox = __webpack_require__(12);
 var $$String = __webpack_require__(17);
 
 var code = "\n  let hello thing =\n    Js.log {j|Hello $thing!|j}\n\n  let () =\n    hello (String.capitalize \"world\")\n";
@@ -4065,7 +3613,7 @@ if (result.tag) {
   eval(code$1);
 }
 
-exports.code   = code;
+exports.code = code;
 exports.result = result;
 /* result Not a pure module */
 
@@ -4075,8 +3623,7 @@ exports.result = result;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(global, process) {// Generated by BUCKLESCRIPT VERSION 2.1.0, PLEASE EDIT WITH CARE
-
+/* WEBPACK VAR INJECTION */(function(global, process) {
 
 var Block = __webpack_require__(7);
 
@@ -4181,7 +3728,7 @@ function loadModule(name, cmi, cmj) {
   return /* () */0;
 }
 
-exports.compile    = compile;
+exports.compile = compile;
 exports.loadModule = loadModule;
 /*  Not a pure module */
 
@@ -38636,10 +38183,11 @@ module.exports = {"O_RDONLY":0,"O_WRONLY":1,"O_RDWR":2,"S_IFMT":61440,"S_IFREG":
 "use strict";
 
 
-var List        = __webpack_require__(8);
-var Bytes       = __webpack_require__(26);
-var Caml_int32  = __webpack_require__(4);
+var List = __webpack_require__(8);
+var Bytes = __webpack_require__(27);
+var Caml_int32 = __webpack_require__(4);
 var Caml_string = __webpack_require__(5);
+var Caml_primitive = __webpack_require__(3);
 
 function make(n, c) {
   return Caml_string.bytes_to_string(Bytes.make(n, c));
@@ -38702,15 +38250,9 @@ function mapi(f, s) {
 function is_space(param) {
   var switcher = param - 9 | 0;
   if (switcher > 4 || switcher < 0) {
-    if (switcher !== 23) {
-      return /* false */0;
-    } else {
-      return /* true */1;
-    }
-  } else if (switcher !== 2) {
-    return /* true */1;
+    return switcher === 23;
   } else {
-    return /* false */0;
+    return switcher !== 2;
   }
 }
 
@@ -38727,28 +38269,26 @@ function escaped(s) {
     while(true) {
       var i = _i;
       if (i >= s.length) {
-        return /* false */0;
+        return false;
       } else {
         var match = s.charCodeAt(i);
         if (match >= 32) {
           var switcher = match - 34 | 0;
           if (switcher > 58 || switcher < 0) {
             if (switcher >= 93) {
-              return /* true */1;
+              return true;
             } else {
               _i = i + 1 | 0;
               continue ;
-              
             }
           } else if (switcher > 57 || switcher < 1) {
-            return /* true */1;
+            return true;
           } else {
             _i = i + 1 | 0;
             continue ;
-            
           }
         } else {
-          return /* true */1;
+          return true;
         }
       }
     };
@@ -38804,37 +38344,37 @@ function uncapitalize(s) {
   return Caml_string.bytes_to_string(Bytes.uncapitalize(Caml_string.bytes_of_string(s)));
 }
 
-var compare = Caml_string.caml_string_compare;
+var compare = Caml_primitive.caml_string_compare;
 
 var fill = Bytes.fill;
 
 var blit = Bytes.blit_string;
 
-exports.make           = make;
-exports.init           = init;
-exports.copy           = copy;
-exports.sub            = sub;
-exports.fill           = fill;
-exports.blit           = blit;
-exports.concat         = concat;
-exports.iter           = iter;
-exports.iteri          = iteri;
-exports.map            = map;
-exports.mapi           = mapi;
-exports.trim           = trim;
-exports.escaped        = escaped;
-exports.index          = index;
-exports.rindex         = rindex;
-exports.index_from     = index_from;
-exports.rindex_from    = rindex_from;
-exports.contains       = contains;
-exports.contains_from  = contains_from;
+exports.make = make;
+exports.init = init;
+exports.copy = copy;
+exports.sub = sub;
+exports.fill = fill;
+exports.blit = blit;
+exports.concat = concat;
+exports.iter = iter;
+exports.iteri = iteri;
+exports.map = map;
+exports.mapi = mapi;
+exports.trim = trim;
+exports.escaped = escaped;
+exports.index = index;
+exports.rindex = rindex;
+exports.index_from = index_from;
+exports.rindex_from = rindex_from;
+exports.contains = contains;
+exports.contains_from = contains_from;
 exports.rcontains_from = rcontains_from;
-exports.uppercase      = uppercase;
-exports.lowercase      = lowercase;
-exports.capitalize     = capitalize;
-exports.uncapitalize   = uncapitalize;
-exports.compare        = compare;
+exports.uppercase = uppercase;
+exports.lowercase = lowercase;
+exports.capitalize = capitalize;
+exports.uncapitalize = uncapitalize;
+exports.compare = compare;
 /* No side effect */
 
 
@@ -38867,7 +38407,6 @@ function len(_acc, _l) {
       _l = l[1];
       _acc = l[0].length + acc | 0;
       continue ;
-      
     } else {
       return acc;
     }
@@ -38891,7 +38430,6 @@ function fill(arr, _i, _l) {
       _l = l[1];
       _i = k;
       continue ;
-      
     } else {
       return /* () */0;
     }
@@ -38936,6 +38474,14 @@ function caml_make_vect(len, init) {
   return b;
 }
 
+function caml_make_float_vect(len) {
+  var b = new Array(len);
+  for(var i = 0 ,i_finish = len - 1 | 0; i <= i_finish; ++i){
+    b[i] = 0;
+  }
+  return b;
+}
+
 function caml_array_blit(a1, i1, a2, i2, len) {
   if (i2 <= i1) {
     for(var j = 0 ,j_finish = len - 1 | 0; j <= j_finish; ++j){
@@ -38950,12 +38496,18 @@ function caml_array_blit(a1, i1, a2, i2, len) {
   }
 }
 
-exports.caml_array_sub    = caml_array_sub;
+function caml_array_dup(prim) {
+  return prim.slice(0);
+}
+
+exports.caml_array_dup = caml_array_dup;
+exports.caml_array_sub = caml_array_sub;
 exports.caml_array_concat = caml_array_concat;
-exports.caml_make_vect    = caml_make_vect;
-exports.caml_array_blit   = caml_array_blit;
-exports.caml_array_get    = caml_array_get;
-exports.caml_array_set    = caml_array_set;
+exports.caml_make_vect = caml_make_vect;
+exports.caml_make_float_vect = caml_make_float_vect;
+exports.caml_array_blit = caml_array_blit;
+exports.caml_array_get = caml_array_get;
+exports.caml_array_set = caml_array_set;
 /* No side effect */
 
 
@@ -38964,16 +38516,653 @@ exports.caml_array_set    = caml_array_set;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+
+
+var Curry = __webpack_require__(2);
+var Caml_io = __webpack_require__(20);
+var Caml_sys = __webpack_require__(21);
+var Caml_format = __webpack_require__(22);
+var Caml_string = __webpack_require__(5);
+var Caml_exceptions = __webpack_require__(24);
+var Caml_missing_polyfill = __webpack_require__(25);
+var Caml_builtin_exceptions = __webpack_require__(0);
+var CamlinternalFormatBasics = __webpack_require__(26);
+
+function failwith(s) {
+  throw [
+        Caml_builtin_exceptions.failure,
+        s
+      ];
+}
+
+function invalid_arg(s) {
+  throw [
+        Caml_builtin_exceptions.invalid_argument,
+        s
+      ];
+}
+
+var Exit = Caml_exceptions.create("Pervasives.Exit");
+
+function abs(x) {
+  if (x >= 0) {
+    return x;
+  } else {
+    return -x | 0;
+  }
+}
+
+function lnot(x) {
+  return x ^ -1;
+}
+
+var min_int = -2147483648;
+
+function char_of_int(n) {
+  if (n < 0 || n > 255) {
+    throw [
+          Caml_builtin_exceptions.invalid_argument,
+          "char_of_int"
+        ];
+  } else {
+    return n;
+  }
+}
+
+function string_of_bool(b) {
+  if (b) {
+    return "true";
+  } else {
+    return "false";
+  }
+}
+
+function bool_of_string(param) {
+  switch (param) {
+    case "false" : 
+        return false;
+    case "true" : 
+        return true;
+    default:
+      throw [
+            Caml_builtin_exceptions.invalid_argument,
+            "bool_of_string"
+          ];
+  }
+}
+
+function valid_float_lexem(s) {
+  var l = s.length;
+  var _i = 0;
+  while(true) {
+    var i = _i;
+    if (i >= l) {
+      return s + ".";
+    } else {
+      var match = Caml_string.get(s, i);
+      if (match >= 48) {
+        if (match >= 58) {
+          return s;
+        } else {
+          _i = i + 1 | 0;
+          continue ;
+        }
+      } else if (match !== 45) {
+        return s;
+      } else {
+        _i = i + 1 | 0;
+        continue ;
+      }
+    }
+  };
+}
+
+function string_of_float(f) {
+  return valid_float_lexem(Caml_format.caml_format_float("%.12g", f));
+}
+
+function $at(l1, l2) {
+  if (l1) {
+    return /* :: */[
+            l1[0],
+            $at(l1[1], l2)
+          ];
+  } else {
+    return l2;
+  }
+}
+
+var stdin = Caml_io.stdin;
+
+var stdout = Caml_io.stdout;
+
+var stderr = Caml_io.stderr;
+
+function open_out_gen(_, _$1, _$2) {
+  return Caml_io.caml_ml_open_descriptor_out(Caml_missing_polyfill.not_implemented("caml_sys_open"));
+}
+
+function open_out(name) {
+  return open_out_gen(/* :: */[
+              /* Open_wronly */1,
+              /* :: */[
+                /* Open_creat */3,
+                /* :: */[
+                  /* Open_trunc */4,
+                  /* :: */[
+                    /* Open_text */7,
+                    /* [] */0
+                  ]
+                ]
+              ]
+            ], 438, name);
+}
+
+function open_out_bin(name) {
+  return open_out_gen(/* :: */[
+              /* Open_wronly */1,
+              /* :: */[
+                /* Open_creat */3,
+                /* :: */[
+                  /* Open_trunc */4,
+                  /* :: */[
+                    /* Open_binary */6,
+                    /* [] */0
+                  ]
+                ]
+              ]
+            ], 438, name);
+}
+
+function flush_all() {
+  var _param = Caml_io.caml_ml_out_channels_list(/* () */0);
+  while(true) {
+    var param = _param;
+    if (param) {
+      try {
+        Caml_io.caml_ml_flush(param[0]);
+      }
+      catch (exn){
+        
+      }
+      _param = param[1];
+      continue ;
+    } else {
+      return /* () */0;
+    }
+  };
+}
+
+function output_bytes(oc, s) {
+  return Caml_io.caml_ml_output(oc, s, 0, s.length);
+}
+
+function output_string(oc, s) {
+  return Caml_io.caml_ml_output(oc, s, 0, s.length);
+}
+
+function output(oc, s, ofs, len) {
+  if (ofs < 0 || len < 0 || ofs > (s.length - len | 0)) {
+    throw [
+          Caml_builtin_exceptions.invalid_argument,
+          "output"
+        ];
+  } else {
+    return Caml_io.caml_ml_output(oc, s, ofs, len);
+  }
+}
+
+function output_substring(oc, s, ofs, len) {
+  if (ofs < 0 || len < 0 || ofs > (s.length - len | 0)) {
+    throw [
+          Caml_builtin_exceptions.invalid_argument,
+          "output_substring"
+        ];
+  } else {
+    return Caml_io.caml_ml_output(oc, s, ofs, len);
+  }
+}
+
+function output_value(_, _$1) {
+  return Caml_missing_polyfill.not_implemented("caml_output_value");
+}
+
+function close_out(oc) {
+  Caml_io.caml_ml_flush(oc);
+  return Caml_missing_polyfill.not_implemented("caml_ml_close_channel");
+}
+
+function close_out_noerr(oc) {
+  try {
+    Caml_io.caml_ml_flush(oc);
+  }
+  catch (exn){
+    
+  }
+  try {
+    return Caml_missing_polyfill.not_implemented("caml_ml_close_channel");
+  }
+  catch (exn$1){
+    return /* () */0;
+  }
+}
+
+function open_in_gen(_, _$1, _$2) {
+  return Caml_io.caml_ml_open_descriptor_in(Caml_missing_polyfill.not_implemented("caml_sys_open"));
+}
+
+function open_in(name) {
+  return open_in_gen(/* :: */[
+              /* Open_rdonly */0,
+              /* :: */[
+                /* Open_text */7,
+                /* [] */0
+              ]
+            ], 0, name);
+}
+
+function open_in_bin(name) {
+  return open_in_gen(/* :: */[
+              /* Open_rdonly */0,
+              /* :: */[
+                /* Open_binary */6,
+                /* [] */0
+              ]
+            ], 0, name);
+}
+
+function input(_, s, ofs, len) {
+  if (ofs < 0 || len < 0 || ofs > (s.length - len | 0)) {
+    throw [
+          Caml_builtin_exceptions.invalid_argument,
+          "input"
+        ];
+  } else {
+    return Caml_missing_polyfill.not_implemented("caml_ml_input");
+  }
+}
+
+function unsafe_really_input(_, _$1, _ofs, _len) {
+  while(true) {
+    var len = _len;
+    var ofs = _ofs;
+    if (len <= 0) {
+      return /* () */0;
+    } else {
+      var r = Caml_missing_polyfill.not_implemented("caml_ml_input");
+      if (r === 0) {
+        throw Caml_builtin_exceptions.end_of_file;
+      } else {
+        _len = len - r | 0;
+        _ofs = ofs + r | 0;
+        continue ;
+      }
+    }
+  };
+}
+
+function really_input(ic, s, ofs, len) {
+  if (ofs < 0 || len < 0 || ofs > (s.length - len | 0)) {
+    throw [
+          Caml_builtin_exceptions.invalid_argument,
+          "really_input"
+        ];
+  } else {
+    return unsafe_really_input(ic, s, ofs, len);
+  }
+}
+
+function really_input_string(ic, len) {
+  var s = Caml_string.caml_create_string(len);
+  really_input(ic, s, 0, len);
+  return Caml_string.bytes_to_string(s);
+}
+
+function input_line(chan) {
+  var build_result = function (buf, _pos, _param) {
+    while(true) {
+      var param = _param;
+      var pos = _pos;
+      if (param) {
+        var hd = param[0];
+        var len = hd.length;
+        Caml_string.caml_blit_bytes(hd, 0, buf, pos - len | 0, len);
+        _param = param[1];
+        _pos = pos - len | 0;
+        continue ;
+      } else {
+        return buf;
+      }
+    };
+  };
+  var scan = function (_accu, _len) {
+    while(true) {
+      var len = _len;
+      var accu = _accu;
+      var n = Caml_missing_polyfill.not_implemented("caml_ml_input_scan_line");
+      if (n === 0) {
+        if (accu) {
+          return build_result(Caml_string.caml_create_string(len), len, accu);
+        } else {
+          throw Caml_builtin_exceptions.end_of_file;
+        }
+      } else if (n > 0) {
+        var res = Caml_string.caml_create_string(n - 1 | 0);
+        Caml_missing_polyfill.not_implemented("caml_ml_input");
+        Caml_io.caml_ml_input_char(chan);
+        if (accu) {
+          var len$1 = (len + n | 0) - 1 | 0;
+          return build_result(Caml_string.caml_create_string(len$1), len$1, /* :: */[
+                      res,
+                      accu
+                    ]);
+        } else {
+          return res;
+        }
+      } else {
+        var beg = Caml_string.caml_create_string(-n | 0);
+        Caml_missing_polyfill.not_implemented("caml_ml_input");
+        _len = len - n | 0;
+        _accu = /* :: */[
+          beg,
+          accu
+        ];
+        continue ;
+      }
+    };
+  };
+  return Caml_string.bytes_to_string(scan(/* [] */0, 0));
+}
+
+function close_in_noerr() {
+  try {
+    return Caml_missing_polyfill.not_implemented("caml_ml_close_channel");
+  }
+  catch (exn){
+    return /* () */0;
+  }
+}
+
+function print_char(c) {
+  return Caml_io.caml_ml_output_char(stdout, c);
+}
+
+function print_string(s) {
+  return output_string(stdout, s);
+}
+
+function print_bytes(s) {
+  return output_bytes(stdout, s);
+}
+
+function print_int(i) {
+  return output_string(stdout, String(i));
+}
+
+function print_float(f) {
+  return output_string(stdout, valid_float_lexem(Caml_format.caml_format_float("%.12g", f)));
+}
+
+function print_newline() {
+  Caml_io.caml_ml_output_char(stdout, /* "\n" */10);
+  return Caml_io.caml_ml_flush(stdout);
+}
+
+function prerr_char(c) {
+  return Caml_io.caml_ml_output_char(stderr, c);
+}
+
+function prerr_string(s) {
+  return output_string(stderr, s);
+}
+
+function prerr_bytes(s) {
+  return output_bytes(stderr, s);
+}
+
+function prerr_int(i) {
+  return output_string(stderr, String(i));
+}
+
+function prerr_float(f) {
+  return output_string(stderr, valid_float_lexem(Caml_format.caml_format_float("%.12g", f)));
+}
+
+function prerr_newline() {
+  Caml_io.caml_ml_output_char(stderr, /* "\n" */10);
+  return Caml_io.caml_ml_flush(stderr);
+}
+
+function read_line() {
+  Caml_io.caml_ml_flush(stdout);
+  return input_line(stdin);
+}
+
+function read_int() {
+  return Caml_format.caml_int_of_string((Caml_io.caml_ml_flush(stdout), input_line(stdin)));
+}
+
+function read_float() {
+  return Caml_format.caml_float_of_string((Caml_io.caml_ml_flush(stdout), input_line(stdin)));
+}
+
+function string_of_format(param) {
+  return param[1];
+}
+
+function $caret$caret(param, param$1) {
+  return /* Format */[
+          CamlinternalFormatBasics.concat_fmt(param[0], param$1[0]),
+          param[1] + ("%," + param$1[1])
+        ];
+}
+
+var exit_function = [flush_all];
+
+function at_exit(f) {
+  var g = exit_function[0];
+  exit_function[0] = (function () {
+      Curry._1(f, /* () */0);
+      return Curry._1(g, /* () */0);
+    });
+  return /* () */0;
+}
+
+function do_at_exit() {
+  return Curry._1(exit_function[0], /* () */0);
+}
+
+function exit(retcode) {
+  do_at_exit(/* () */0);
+  return Caml_sys.caml_sys_exit(retcode);
+}
+
+var max_int = 2147483647;
+
+var epsilon_float = 2.220446049250313e-16;
+
+var flush = Caml_io.caml_ml_flush;
+
+var output_char = Caml_io.caml_ml_output_char;
+
+var output_byte = Caml_io.caml_ml_output_char;
+
+function output_binary_int(_, _$1) {
+  return Caml_missing_polyfill.not_implemented("caml_ml_output_int");
+}
+
+function seek_out(_, _$1) {
+  return Caml_missing_polyfill.not_implemented("caml_ml_seek_out");
+}
+
+function pos_out() {
+  return Caml_missing_polyfill.not_implemented("caml_ml_pos_out");
+}
+
+function out_channel_length() {
+  return Caml_missing_polyfill.not_implemented("caml_ml_channel_size");
+}
+
+function set_binary_mode_out(_, _$1) {
+  return Caml_missing_polyfill.not_implemented("caml_ml_set_binary_mode");
+}
+
+var input_char = Caml_io.caml_ml_input_char;
+
+var input_byte = Caml_io.caml_ml_input_char;
+
+function input_binary_int() {
+  return Caml_missing_polyfill.not_implemented("caml_ml_input_int");
+}
+
+function input_value() {
+  return Caml_missing_polyfill.not_implemented("caml_input_value");
+}
+
+function seek_in(_, _$1) {
+  return Caml_missing_polyfill.not_implemented("caml_ml_seek_in");
+}
+
+function pos_in() {
+  return Caml_missing_polyfill.not_implemented("caml_ml_pos_in");
+}
+
+function in_channel_length() {
+  return Caml_missing_polyfill.not_implemented("caml_ml_channel_size");
+}
+
+function close_in() {
+  return Caml_missing_polyfill.not_implemented("caml_ml_close_channel");
+}
+
+function set_binary_mode_in(_, _$1) {
+  return Caml_missing_polyfill.not_implemented("caml_ml_set_binary_mode");
+}
+
+function LargeFile_000(_, _$1) {
+  return Caml_missing_polyfill.not_implemented("caml_ml_seek_out_64");
+}
+
+function LargeFile_001() {
+  return Caml_missing_polyfill.not_implemented("caml_ml_pos_out_64");
+}
+
+function LargeFile_002() {
+  return Caml_missing_polyfill.not_implemented("caml_ml_channel_size_64");
+}
+
+function LargeFile_003(_, _$1) {
+  return Caml_missing_polyfill.not_implemented("caml_ml_seek_in_64");
+}
+
+function LargeFile_004() {
+  return Caml_missing_polyfill.not_implemented("caml_ml_pos_in_64");
+}
+
+function LargeFile_005() {
+  return Caml_missing_polyfill.not_implemented("caml_ml_channel_size_64");
+}
+
+var LargeFile = [
+  LargeFile_000,
+  LargeFile_001,
+  LargeFile_002,
+  LargeFile_003,
+  LargeFile_004,
+  LargeFile_005
+];
+
+exports.invalid_arg = invalid_arg;
+exports.failwith = failwith;
+exports.Exit = Exit;
+exports.abs = abs;
+exports.max_int = max_int;
+exports.min_int = min_int;
+exports.lnot = lnot;
+exports.epsilon_float = epsilon_float;
+exports.char_of_int = char_of_int;
+exports.string_of_bool = string_of_bool;
+exports.bool_of_string = bool_of_string;
+exports.string_of_float = string_of_float;
+exports.$at = $at;
+exports.stdin = stdin;
+exports.stdout = stdout;
+exports.stderr = stderr;
+exports.print_char = print_char;
+exports.print_string = print_string;
+exports.print_bytes = print_bytes;
+exports.print_int = print_int;
+exports.print_float = print_float;
+exports.print_newline = print_newline;
+exports.prerr_char = prerr_char;
+exports.prerr_string = prerr_string;
+exports.prerr_bytes = prerr_bytes;
+exports.prerr_int = prerr_int;
+exports.prerr_float = prerr_float;
+exports.prerr_newline = prerr_newline;
+exports.read_line = read_line;
+exports.read_int = read_int;
+exports.read_float = read_float;
+exports.open_out = open_out;
+exports.open_out_bin = open_out_bin;
+exports.open_out_gen = open_out_gen;
+exports.flush = flush;
+exports.flush_all = flush_all;
+exports.output_char = output_char;
+exports.output_string = output_string;
+exports.output_bytes = output_bytes;
+exports.output = output;
+exports.output_substring = output_substring;
+exports.output_byte = output_byte;
+exports.output_binary_int = output_binary_int;
+exports.output_value = output_value;
+exports.seek_out = seek_out;
+exports.pos_out = pos_out;
+exports.out_channel_length = out_channel_length;
+exports.close_out = close_out;
+exports.close_out_noerr = close_out_noerr;
+exports.set_binary_mode_out = set_binary_mode_out;
+exports.open_in = open_in;
+exports.open_in_bin = open_in_bin;
+exports.open_in_gen = open_in_gen;
+exports.input_char = input_char;
+exports.input_line = input_line;
+exports.input = input;
+exports.really_input = really_input;
+exports.really_input_string = really_input_string;
+exports.input_byte = input_byte;
+exports.input_binary_int = input_binary_int;
+exports.input_value = input_value;
+exports.seek_in = seek_in;
+exports.pos_in = pos_in;
+exports.in_channel_length = in_channel_length;
+exports.close_in = close_in;
+exports.close_in_noerr = close_in_noerr;
+exports.set_binary_mode_in = set_binary_mode_in;
+exports.LargeFile = LargeFile;
+exports.string_of_format = string_of_format;
+exports.$caret$caret = $caret$caret;
+exports.exit = exit;
+exports.at_exit = at_exit;
+exports.valid_float_lexem = valid_float_lexem;
+exports.unsafe_really_input = unsafe_really_input;
+exports.do_at_exit = do_at_exit;
+/* No side effect */
+
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
-var Curry                   = __webpack_require__(2);
+var Curry = __webpack_require__(2);
 var Caml_builtin_exceptions = __webpack_require__(0);
 
 function $caret(prim, prim$1) {
   return prim + prim$1;
 }
-
-var stdin = undefined;
 
 var stdout = /* record */[
   /* buffer */"",
@@ -39080,25 +39269,27 @@ function caml_ml_out_channels_list() {
         ];
 }
 
-exports.$caret                      = $caret;
-exports.stdin                       = stdin;
-exports.stdout                      = stdout;
-exports.stderr                      = stderr;
-exports.caml_ml_open_descriptor_in  = caml_ml_open_descriptor_in;
+var stdin = undefined;
+
+exports.$caret = $caret;
+exports.stdin = stdin;
+exports.stdout = stdout;
+exports.stderr = stderr;
+exports.caml_ml_open_descriptor_in = caml_ml_open_descriptor_in;
 exports.caml_ml_open_descriptor_out = caml_ml_open_descriptor_out;
-exports.caml_ml_flush               = caml_ml_flush;
-exports.node_std_output             = node_std_output;
-exports.caml_ml_output              = caml_ml_output;
-exports.caml_ml_output_char         = caml_ml_output_char;
-exports.caml_ml_input               = caml_ml_input;
-exports.caml_ml_input_char          = caml_ml_input_char;
-exports.caml_ml_out_channels_list   = caml_ml_out_channels_list;
-/* stdin Not a pure module */
+exports.caml_ml_flush = caml_ml_flush;
+exports.node_std_output = node_std_output;
+exports.caml_ml_output = caml_ml_output;
+exports.caml_ml_output_char = caml_ml_output_char;
+exports.caml_ml_input = caml_ml_input;
+exports.caml_ml_input_char = caml_ml_input_char;
+exports.caml_ml_out_channels_list = caml_ml_out_channels_list;
+/* node_std_output Not a pure module */
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39191,30 +39382,30 @@ function caml_sys_file_exists() {
       ];
 }
 
-exports.caml_sys_getenv         = caml_sys_getenv;
-exports.caml_sys_time           = caml_sys_time;
-exports.caml_sys_random_seed    = caml_sys_random_seed;
+exports.caml_sys_getenv = caml_sys_getenv;
+exports.caml_sys_time = caml_sys_time;
+exports.caml_sys_random_seed = caml_sys_random_seed;
 exports.caml_sys_system_command = caml_sys_system_command;
-exports.caml_sys_getcwd         = caml_sys_getcwd;
-exports.caml_sys_get_argv       = caml_sys_get_argv;
-exports.caml_sys_exit           = caml_sys_exit;
-exports.caml_sys_is_directory   = caml_sys_is_directory;
-exports.caml_sys_file_exists    = caml_sys_file_exists;
+exports.caml_sys_getcwd = caml_sys_getcwd;
+exports.caml_sys_get_argv = caml_sys_get_argv;
+exports.caml_sys_exit = caml_sys_exit;
+exports.caml_sys_is_directory = caml_sys_is_directory;
+exports.caml_sys_file_exists = caml_sys_file_exists;
 /* No side effect */
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Curry                   = __webpack_require__(2);
-var Caml_int32              = __webpack_require__(4);
-var Caml_int64              = __webpack_require__(22);
-var Caml_utils              = __webpack_require__(10);
+var Curry = __webpack_require__(2);
+var Caml_int32 = __webpack_require__(4);
+var Caml_int64 = __webpack_require__(23);
+var Caml_utils = __webpack_require__(10);
 var Caml_builtin_exceptions = __webpack_require__(0);
 
 function caml_failwith(s) {
@@ -39333,7 +39524,6 @@ function caml_int_of_string(s) {
         if (a === /* "_" */95) {
           _k = k + 1 | 0;
           continue ;
-          
         } else {
           var v = parse_digit(a);
           if (v < 0 || v >= base) {
@@ -39352,7 +39542,6 @@ function caml_int_of_string(s) {
               _k = k + 1 | 0;
               _acc = acc$1;
               continue ;
-              
             }
           }
         }
@@ -39427,7 +39616,6 @@ function caml_int64_of_string(s) {
         if (a === /* "_" */95) {
           _k = k + 1 | 0;
           continue ;
-          
         } else {
           var v = Caml_int64.of_int32(parse_digit(a));
           if (Caml_int64.lt(v, /* int64 */[
@@ -39443,7 +39631,6 @@ function caml_int64_of_string(s) {
             _k = k + 1 | 0;
             _acc = acc$1;
             continue ;
-            
           }
         }
       }
@@ -39498,11 +39685,11 @@ function parse_format(fmt) {
     /* justify */"+",
     /* signstyle */"-",
     /* filter */" ",
-    /* alternate : false */0,
+    /* alternate */false,
     /* base : Dec */2,
-    /* signedconv : false */0,
+    /* signedconv */false,
     /* width */0,
-    /* uppercase : false */0,
+    /* uppercase */false,
     /* sign */1,
     /* prec */-1,
     /* conv */"f"
@@ -39523,10 +39710,10 @@ function parse_format(fmt) {
             switch (c - 88 | 0) {
               case 0 : 
                   f[/* base */4] = /* Hex */1;
-                  f[/* uppercase */7] = /* true */1;
+                  f[/* uppercase */7] = true;
                   _i = i + 1 | 0;
                   continue ;
-                  case 13 : 
+              case 13 : 
               case 14 : 
               case 15 : 
                   exit = 5;
@@ -39539,11 +39726,11 @@ function parse_format(fmt) {
                   f[/* base */4] = /* Oct */0;
                   _i = i + 1 | 0;
                   continue ;
-                  case 29 : 
+              case 29 : 
                   f[/* base */4] = /* Dec */2;
                   _i = i + 1 | 0;
                   continue ;
-                  case 1 : 
+              case 1 : 
               case 2 : 
               case 3 : 
               case 4 : 
@@ -39573,18 +39760,17 @@ function parse_format(fmt) {
                   f[/* base */4] = /* Hex */1;
                   _i = i + 1 | 0;
                   continue ;
-                  
+              
             }
           }
         } else if (c >= 72) {
           exit = 1;
         } else {
-          f[/* signedconv */5] = /* true */1;
-          f[/* uppercase */7] = /* true */1;
+          f[/* signedconv */5] = true;
+          f[/* uppercase */7] = true;
           f[/* conv */10] = String.fromCharCode(lowercase(c));
           _i = i + 1 | 0;
           continue ;
-          
         }
       } else {
         var switcher = c - 32 | 0;
@@ -39593,10 +39779,10 @@ function parse_format(fmt) {
         } else {
           switch (switcher) {
             case 3 : 
-                f[/* alternate */3] = /* true */1;
+                f[/* alternate */3] = true;
                 _i = i + 1 | 0;
                 continue ;
-                case 0 : 
+            case 0 : 
             case 11 : 
                 exit = 2;
                 break;
@@ -39604,13 +39790,13 @@ function parse_format(fmt) {
                 f[/* justify */0] = "-";
                 _i = i + 1 | 0;
                 continue ;
-                case 14 : 
+            case 14 : 
                 f[/* prec */9] = 0;
                 var j = i + 1 | 0;
                 while((function(j){
                     return function () {
                       var w = fmt.charCodeAt(j) - /* "0" */48 | 0;
-                      return +(w >= 0 && w <= 9);
+                      return w >= 0 && w <= 9;
                     }
                     }(j))()) {
                   f[/* prec */9] = (Caml_int32.imul(f[/* prec */9], 10) + fmt.charCodeAt(j) | 0) - /* "0" */48 | 0;
@@ -39618,7 +39804,7 @@ function parse_format(fmt) {
                 };
                 _i = j;
                 continue ;
-                case 1 : 
+            case 1 : 
             case 2 : 
             case 4 : 
             case 5 : 
@@ -39635,7 +39821,7 @@ function parse_format(fmt) {
                 f[/* filter */2] = "0";
                 _i = i + 1 | 0;
                 continue ;
-                case 17 : 
+            case 17 : 
             case 18 : 
             case 19 : 
             case 20 : 
@@ -39654,17 +39840,17 @@ function parse_format(fmt) {
         case 1 : 
             _i = i + 1 | 0;
             continue ;
-            case 2 : 
+        case 2 : 
             f[/* signstyle */1] = String.fromCharCode(c);
             _i = i + 1 | 0;
             continue ;
-            case 3 : 
+        case 3 : 
             f[/* width */6] = 0;
             var j$1 = i;
             while((function(j$1){
                 return function () {
                   var w = fmt.charCodeAt(j$1) - /* "0" */48 | 0;
-                  return +(w >= 0 && w <= 9);
+                  return w >= 0 && w <= 9;
                 }
                 }(j$1))()) {
               f[/* width */6] = (Caml_int32.imul(f[/* width */6], 10) + fmt.charCodeAt(j$1) | 0) - /* "0" */48 | 0;
@@ -39672,17 +39858,17 @@ function parse_format(fmt) {
             };
             _i = j$1;
             continue ;
-            case 4 : 
-            f[/* signedconv */5] = /* true */1;
+        case 4 : 
+            f[/* signedconv */5] = true;
             f[/* base */4] = /* Dec */2;
             _i = i + 1 | 0;
             continue ;
-            case 5 : 
-            f[/* signedconv */5] = /* true */1;
+        case 5 : 
+            f[/* signedconv */5] = true;
             f[/* conv */10] = String.fromCharCode(c);
             _i = i + 1 | 0;
             continue ;
-            
+        
       }
     }
   };
@@ -39703,14 +39889,12 @@ function finish_formatting(param, rawbuffer) {
     len = len + 1 | 0;
   }
   if (alternate) {
-    if (base) {
-      if (base === /* Hex */1) {
-        len = len + 2 | 0;
-      }
-      
-    } else {
+    if (base === /* Oct */0) {
       len = len + 1 | 0;
+    } else if (base === /* Hex */1) {
+      len = len + 2 | 0;
     }
+    
   }
   var buffer = "";
   if (justify === "+" && filter === " ") {
@@ -39932,7 +40116,7 @@ function caml_format_float(fmt, x) {
             } else {
               while((function () {
                       s = x$1.toFixed(p);
-                      return +(s.length > (prec$1 + 1 | 0));
+                      return s.length > (prec$1 + 1 | 0);
                     })()) {
                 p = p - 1 | 0;
               };
@@ -39999,29 +40183,29 @@ var caml_int32_of_string = caml_int_of_string;
 
 var caml_nativeint_of_string = caml_int_of_string;
 
-exports.caml_format_float        = caml_format_float;
-exports.caml_format_int          = caml_format_int;
-exports.caml_nativeint_format    = caml_nativeint_format;
-exports.caml_int32_format        = caml_int32_format;
-exports.caml_float_of_string     = caml_float_of_string;
-exports.caml_int64_format        = caml_int64_format;
-exports.caml_int_of_string       = caml_int_of_string;
-exports.caml_int32_of_string     = caml_int32_of_string;
-exports.caml_int64_of_string     = caml_int64_of_string;
+exports.caml_format_float = caml_format_float;
+exports.caml_format_int = caml_format_int;
+exports.caml_nativeint_format = caml_nativeint_format;
+exports.caml_int32_format = caml_int32_format;
+exports.caml_float_of_string = caml_float_of_string;
+exports.caml_int64_format = caml_int64_format;
+exports.caml_int_of_string = caml_int_of_string;
+exports.caml_int32_of_string = caml_int32_of_string;
+exports.caml_int64_of_string = caml_int64_of_string;
 exports.caml_nativeint_of_string = caml_nativeint_of_string;
 /* float_of_string Not a pure module */
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Caml_obj                = __webpack_require__(3);
-var Caml_int32              = __webpack_require__(4);
-var Caml_utils              = __webpack_require__(10);
+var Caml_int32 = __webpack_require__(4);
+var Caml_utils = __webpack_require__(10);
+var Caml_primitive = __webpack_require__(3);
 var Caml_builtin_exceptions = __webpack_require__(0);
 
 var min_int = /* record */[
@@ -40030,7 +40214,7 @@ var min_int = /* record */[
 ];
 
 var max_int = /* record */[
-  /* hi */134217727,
+  /* hi */2147483647,
   /* lo */1
 ];
 
@@ -40050,7 +40234,7 @@ var neg_one = /* record */[
 ];
 
 function neg_signed(x) {
-  return +((x & 2147483648) !== 0);
+  return (x & 2147483648) !== 0;
 }
 
 function add(param, param$1) {
@@ -40076,9 +40260,33 @@ function not(param) {
 
 function eq(x, y) {
   if (x[/* hi */0] === y[/* hi */0]) {
-    return +(x[/* lo */1] === y[/* lo */1]);
+    return x[/* lo */1] === y[/* lo */1];
   } else {
-    return /* false */0;
+    return false;
+  }
+}
+
+function equal_null(x, y) {
+  if (y !== null) {
+    return eq(x, y);
+  } else {
+    return false;
+  }
+}
+
+function equal_undefined(x, y) {
+  if (y !== undefined) {
+    return eq(x, y);
+  } else {
+    return false;
+  }
+}
+
+function equal_nullable(x, y) {
+  if (y == null) {
+    return false;
+  } else {
+    return eq(x, y);
   }
 }
 
@@ -40095,7 +40303,9 @@ function sub(x, y) {
 }
 
 function lsl_(x, numBits) {
-  if (numBits) {
+  if (numBits === 0) {
+    return x;
+  } else {
     var lo = x[/* lo */1];
     if (numBits >= 32) {
       return /* record */[
@@ -40109,43 +40319,41 @@ function lsl_(x, numBits) {
               /* lo */((lo << numBits) >>> 0)
             ];
     }
-  } else {
-    return x;
   }
 }
 
 function lsr_(x, numBits) {
-  if (numBits) {
+  if (numBits === 0) {
+    return x;
+  } else {
     var hi = x[/* hi */0];
     var offset = numBits - 32 | 0;
-    if (offset) {
-      if (offset > 0) {
-        var lo = (hi >>> offset);
-        return /* record */[
-                /* hi */0,
-                /* lo */(lo >>> 0)
-              ];
-      } else {
-        var hi$1 = (hi >>> numBits);
-        var lo$1 = (hi << (-offset | 0)) | (x[/* lo */1] >>> numBits);
-        return /* record */[
-                /* hi */hi$1,
-                /* lo */(lo$1 >>> 0)
-              ];
-      }
-    } else {
+    if (offset === 0) {
       return /* record */[
               /* hi */0,
               /* lo */(hi >>> 0)
             ];
+    } else if (offset > 0) {
+      var lo = (hi >>> offset);
+      return /* record */[
+              /* hi */0,
+              /* lo */(lo >>> 0)
+            ];
+    } else {
+      var hi$1 = (hi >>> numBits);
+      var lo$1 = (hi << (-offset | 0)) | (x[/* lo */1] >>> numBits);
+      return /* record */[
+              /* hi */hi$1,
+              /* lo */(lo$1 >>> 0)
+            ];
     }
-  } else {
-    return x;
   }
 }
 
 function asr_(x, numBits) {
-  if (numBits) {
+  if (numBits === 0) {
+    return x;
+  } else {
     var hi = x[/* hi */0];
     if (numBits < 32) {
       var hi$1 = (hi >> numBits);
@@ -40161,16 +40369,14 @@ function asr_(x, numBits) {
               /* lo */(lo$1 >>> 0)
             ];
     }
-  } else {
-    return x;
   }
 }
 
 function is_zero(param) {
   if (param[/* hi */0] !== 0 || param[/* lo */1] !== 0) {
-    return /* false */0;
+    return false;
   } else {
-    return /* true */1;
+    return true;
   }
 }
 
@@ -40184,26 +40390,20 @@ function mul(_this, _other) {
     var exit$1 = 0;
     var exit$2 = 0;
     var exit$3 = 0;
-    if (this_hi !== 0) {
-      exit$3 = 4;
-    } else if ($$this[/* lo */1] !== 0) {
+    if (this_hi !== 0 || $$this[/* lo */1] !== 0) {
       exit$3 = 4;
     } else {
       return zero;
     }
     if (exit$3 === 4) {
-      if (other[/* hi */0] !== 0) {
-        exit$2 = 3;
-      } else if (other[/* lo */1] !== 0) {
+      if (other[/* hi */0] !== 0 || other[/* lo */1] !== 0) {
         exit$2 = 3;
       } else {
         return zero;
       }
     }
     if (exit$2 === 3) {
-      if (this_hi !== -2147483648) {
-        exit$1 = 2;
-      } else if ($$this[/* lo */1] !== 0) {
+      if (this_hi !== -2147483648 || $$this[/* lo */1] !== 0) {
         exit$1 = 2;
       } else {
         lo = other[/* lo */1];
@@ -40214,9 +40414,7 @@ function mul(_this, _other) {
       var other_hi = other[/* hi */0];
       var lo$1 = $$this[/* lo */1];
       var exit$4 = 0;
-      if (other_hi !== -2147483648) {
-        exit$4 = 3;
-      } else if (other[/* lo */1] !== 0) {
+      if (other_hi !== -2147483648 || other[/* lo */1] !== 0) {
         exit$4 = 3;
       } else {
         lo = lo$1;
@@ -40229,7 +40427,6 @@ function mul(_this, _other) {
             _other = neg(other);
             _this = neg($$this);
             continue ;
-            
           } else {
             return neg(mul(neg($$this), other));
           }
@@ -40314,34 +40511,50 @@ function ge(param, param$1) {
   var other_hi = param$1[/* hi */0];
   var hi = param[/* hi */0];
   if (hi > other_hi) {
-    return /* true */1;
+    return true;
   } else if (hi < other_hi) {
-    return /* false */0;
+    return false;
   } else {
-    return +(param[/* lo */1] >= param$1[/* lo */1]);
+    return param[/* lo */1] >= param$1[/* lo */1];
   }
 }
 
 function neq(x, y) {
-  return 1 - eq(x, y);
+  return !eq(x, y);
 }
 
 function lt(x, y) {
-  return 1 - ge(x, y);
+  return !ge(x, y);
 }
 
 function gt(x, y) {
   if (x[/* hi */0] > y[/* hi */0]) {
-    return /* true */1;
+    return true;
   } else if (x[/* hi */0] < y[/* hi */0]) {
-    return /* false */0;
+    return false;
   } else {
-    return +(x[/* lo */1] > y[/* lo */1]);
+    return x[/* lo */1] > y[/* lo */1];
   }
 }
 
 function le(x, y) {
-  return 1 - gt(x, y);
+  return !gt(x, y);
+}
+
+function min(x, y) {
+  if (ge(x, y)) {
+    return y;
+  } else {
+    return x;
+  }
+}
+
+function max(x, y) {
+  if (gt(x, y)) {
+    return x;
+  } else {
+    return y;
+  }
 }
 
 function to_float(param) {
@@ -40380,18 +40593,14 @@ function div(_self, _other) {
     var self_hi = self[/* hi */0];
     var exit = 0;
     var exit$1 = 0;
-    if (other[/* hi */0] !== 0) {
-      exit$1 = 2;
-    } else if (other[/* lo */1] !== 0) {
+    if (other[/* hi */0] !== 0 || other[/* lo */1] !== 0) {
       exit$1 = 2;
     } else {
       throw Caml_builtin_exceptions.division_by_zero;
     }
     if (exit$1 === 2) {
       if (self_hi !== -2147483648) {
-        if (self_hi !== 0) {
-          exit = 1;
-        } else if (self[/* lo */1] !== 0) {
+        if (self_hi !== 0 || self[/* lo */1] !== 0) {
           exit = 1;
         } else {
           return zero;
@@ -40407,9 +40616,7 @@ function div(_self, _other) {
         var half_this = asr_(self, 1);
         var approx = lsl_(div(half_this, other), 1);
         var exit$2 = 0;
-        if (approx[/* hi */0] !== 0) {
-          exit$2 = 3;
-        } else if (approx[/* lo */1] !== 0) {
+        if (approx[/* hi */0] !== 0 || approx[/* lo */1] !== 0) {
           exit$2 = 3;
         } else if (other_hi < 0) {
           return one;
@@ -40427,9 +40634,7 @@ function div(_self, _other) {
     if (exit === 1) {
       var other_hi$1 = other[/* hi */0];
       var exit$3 = 0;
-      if (other_hi$1 !== -2147483648) {
-        exit$3 = 2;
-      } else if (other[/* lo */1] !== 0) {
+      if (other_hi$1 !== -2147483648 || other[/* lo */1] !== 0) {
         exit$3 = 2;
       } else {
         return zero;
@@ -40440,7 +40645,6 @@ function div(_self, _other) {
             _other = neg(other);
             _self = neg(self);
             continue ;
-            
           } else {
             return neg(div(neg(self), other));
           }
@@ -40450,7 +40654,7 @@ function div(_self, _other) {
           var res = zero;
           var rem$1 = self;
           while(ge(rem$1, other)) {
-            var approx$1 = Math.max(1, Math.floor(to_float(rem$1) / to_float(other)));
+            var approx$1 = Caml_primitive.caml_float_max(1, Math.floor(to_float(rem$1) / to_float(other)));
             var log2 = Math.ceil(Math.log(approx$1) / Math.LN2);
             var delta = log2 <= 48 ? 1 : Math.pow(2, log2 - 48);
             var approxRes = of_float(approx$1);
@@ -40490,11 +40694,11 @@ function div_mod(self, other) {
 }
 
 function compare(self, other) {
-  var v = Caml_obj.caml_nativeint_compare(self[/* hi */0], other[/* hi */0]);
-  if (v) {
-    return v;
+  var v = Caml_primitive.caml_nativeint_compare(self[/* hi */0], other[/* hi */0]);
+  if (v === 0) {
+    return Caml_primitive.caml_nativeint_compare(self[/* lo */1], other[/* lo */1]);
   } else {
-    return Caml_obj.caml_nativeint_compare(self[/* lo */1], other[/* lo */1]);
+    return v;
   }
 }
 
@@ -40516,9 +40720,7 @@ function to_hex(x) {
   var match = x[/* hi */0];
   var match$1 = x[/* lo */1];
   var exit = 0;
-  if (match !== 0) {
-    exit = 1;
-  } else if (match$1 !== 0) {
+  if (match !== 0 || match$1 !== 0) {
     exit = 1;
   } else {
     return "0";
@@ -40559,7 +40761,7 @@ function float_of_bits(x) {
 }
 
 function bits_of_float(x) {
-  var u = new Float64Array(/* float array */[x]);
+  var u = new Float64Array(/* array */[x]);
   var int32 = new Int32Array(u.buffer);
   var x$1 = int32[1];
   var hi = x$1;
@@ -40580,47 +40782,52 @@ function get64(s, i) {
         ];
 }
 
-exports.min_int       = min_int;
-exports.max_int       = max_int;
-exports.one           = one;
-exports.zero          = zero;
-exports.not           = not;
-exports.of_int32      = of_int32;
-exports.to_int32      = to_int32;
-exports.add           = add;
-exports.neg           = neg;
-exports.sub           = sub;
-exports.lsl_          = lsl_;
-exports.lsr_          = lsr_;
-exports.asr_          = asr_;
-exports.is_zero       = is_zero;
-exports.mul           = mul;
-exports.xor           = xor;
-exports.or_           = or_;
-exports.and_          = and_;
-exports.swap          = swap;
-exports.ge            = ge;
-exports.eq            = eq;
-exports.neq           = neq;
-exports.lt            = lt;
-exports.gt            = gt;
-exports.le            = le;
-exports.to_float      = to_float;
-exports.of_float      = of_float;
-exports.div           = div;
-exports.mod_          = mod_;
-exports.div_mod       = div_mod;
-exports.compare       = compare;
-exports.to_hex        = to_hex;
-exports.discard_sign  = discard_sign;
+exports.min_int = min_int;
+exports.max_int = max_int;
+exports.one = one;
+exports.zero = zero;
+exports.not = not;
+exports.of_int32 = of_int32;
+exports.to_int32 = to_int32;
+exports.add = add;
+exports.neg = neg;
+exports.sub = sub;
+exports.lsl_ = lsl_;
+exports.lsr_ = lsr_;
+exports.asr_ = asr_;
+exports.is_zero = is_zero;
+exports.mul = mul;
+exports.xor = xor;
+exports.or_ = or_;
+exports.and_ = and_;
+exports.swap = swap;
+exports.ge = ge;
+exports.eq = eq;
+exports.neq = neq;
+exports.lt = lt;
+exports.gt = gt;
+exports.le = le;
+exports.equal_null = equal_null;
+exports.equal_undefined = equal_undefined;
+exports.equal_nullable = equal_nullable;
+exports.min = min;
+exports.max = max;
+exports.to_float = to_float;
+exports.of_float = of_float;
+exports.div = div;
+exports.mod_ = mod_;
+exports.div_mod = div_mod;
+exports.compare = compare;
+exports.to_hex = to_hex;
+exports.discard_sign = discard_sign;
 exports.float_of_bits = float_of_bits;
 exports.bits_of_float = bits_of_float;
-exports.get64         = get64;
+exports.get64 = get64;
 /* two_ptr_32_dbl Not a pure module */
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40652,42 +40859,45 @@ function create(str) {
 
 function isCamlExceptionOrOpenVariant(e) {
   if (e === undefined) {
-    return /* false */0;
+    return false;
   } else if (e.tag === 248) {
-    return /* true */1;
+    return true;
   } else {
     var slot = e[0];
     if (slot !== undefined) {
-      return +(slot.tag === 248);
+      return slot.tag === 248;
     } else {
-      return /* false */0;
+      return false;
     }
   }
 }
 
-exports.caml_set_oo_id               = caml_set_oo_id;
-exports.get_id                       = get_id;
-exports.create                       = create;
+exports.caml_set_oo_id = caml_set_oo_id;
+exports.get_id = get_id;
+exports.create = create;
 exports.isCamlExceptionOrOpenVariant = isCamlExceptionOrOpenVariant;
 /* No side effect */
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 
-var not_implemented = (function (s){ throw new Error(s)});
+function not_implemented(s) {
+  var str = s + " not implemented by BuckleScript yet\n";
+  throw new Error(str);
+}
 
 exports.not_implemented = not_implemented;
-/* not_implemented Not a pure module */
+/* No side effect */
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40916,25 +41126,25 @@ function concat_fmt(fmt1, fmt2) {
 }
 
 exports.concat_fmtty = concat_fmtty;
-exports.erase_rel    = erase_rel;
-exports.concat_fmt   = concat_fmt;
+exports.erase_rel = erase_rel;
+exports.concat_fmt = concat_fmt;
 /* No side effect */
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Char                    = __webpack_require__(27);
-var List                    = __webpack_require__(8);
-var Curry                   = __webpack_require__(2);
-var Caml_obj                = __webpack_require__(3);
-var Caml_int32              = __webpack_require__(4);
-var Pervasives              = __webpack_require__(9);
-var Caml_string             = __webpack_require__(5);
+var Char = __webpack_require__(28);
+var List = __webpack_require__(8);
+var Curry = __webpack_require__(2);
+var Caml_obj = __webpack_require__(9);
+var Caml_int32 = __webpack_require__(4);
+var Caml_string = __webpack_require__(5);
+var Caml_primitive = __webpack_require__(3);
 var Caml_builtin_exceptions = __webpack_require__(0);
 
 function make(n, c) {
@@ -40997,7 +41207,7 @@ function extend(s, left, right) {
     ];
   var dstoff = match[1];
   var srcoff = match[0];
-  var cpylen = Pervasives.min(s.length - srcoff | 0, len - dstoff | 0);
+  var cpylen = Caml_primitive.caml_int_min(s.length - srcoff | 0, len - dstoff | 0);
   if (cpylen > 0) {
     Caml_string.caml_blit_bytes(s, srcoff, r, dstoff, cpylen);
   }
@@ -41077,22 +41287,21 @@ function concat(sep, l) {
   }
 }
 
-function cat(a, b) {
-  return a.concat(b);
+function cat(s1, s2) {
+  var l1 = s1.length;
+  var l2 = s2.length;
+  var r = Caml_string.caml_create_string(l1 + l2 | 0);
+  Caml_string.caml_blit_bytes(s1, 0, r, 0, l1);
+  Caml_string.caml_blit_bytes(s2, 0, r, l1, l2);
+  return r;
 }
 
 function is_space(param) {
   var switcher = param - 9 | 0;
   if (switcher > 4 || switcher < 0) {
-    if (switcher !== 23) {
-      return /* false */0;
-    } else {
-      return /* true */1;
-    }
-  } else if (switcher !== 2) {
-    return /* true */1;
+    return switcher === 23;
   } else {
-    return /* false */0;
+    return switcher !== 2;
   }
 }
 
@@ -41222,27 +41431,27 @@ function escaped(s) {
 
 function map(f, s) {
   var l = s.length;
-  if (l) {
+  if (l === 0) {
+    return s;
+  } else {
     var r = Caml_string.caml_create_string(l);
     for(var i = 0 ,i_finish = l - 1 | 0; i <= i_finish; ++i){
       r[i] = Curry._1(f, s[i]);
     }
     return r;
-  } else {
-    return s;
   }
 }
 
 function mapi(f, s) {
   var l = s.length;
-  if (l) {
+  if (l === 0) {
+    return s;
+  } else {
     var r = Caml_string.caml_create_string(l);
     for(var i = 0 ,i_finish = l - 1 | 0; i <= i_finish; ++i){
       r[i] = Curry._2(f, i, s[i]);
     }
     return r;
-  } else {
-    return s;
   }
 }
 
@@ -41255,12 +41464,12 @@ function lowercase(s) {
 }
 
 function apply1(f, s) {
-  if (s.length) {
+  if (s.length === 0) {
+    return s;
+  } else {
     var r = copy(s);
     r[0] = Curry._1(f, s[0]);
     return r;
-  } else {
-    return s;
   }
 }
 
@@ -41282,7 +41491,6 @@ function index_rec(s, lim, _i, c) {
     } else {
       _i = i + 1 | 0;
       continue ;
-      
     }
   };
 }
@@ -41313,7 +41521,6 @@ function rindex_rec(s, _i, c) {
     } else {
       _i = i - 1 | 0;
       continue ;
-      
     }
   };
 }
@@ -41343,11 +41550,11 @@ function contains_from(s, i, c) {
   } else {
     try {
       index_rec(s, l, i, c);
-      return /* true */1;
+      return true;
     }
     catch (exn){
       if (exn === Caml_builtin_exceptions.not_found) {
-        return /* false */0;
+        return false;
       } else {
         throw exn;
       }
@@ -41368,11 +41575,11 @@ function rcontains_from(s, i, c) {
   } else {
     try {
       rindex_rec(s, i, c);
-      return /* true */1;
+      return true;
     }
     catch (exn){
       if (exn === Caml_builtin_exceptions.not_found) {
-        return /* false */0;
+        return false;
       } else {
         throw exn;
       }
@@ -41386,51 +41593,51 @@ var unsafe_to_string = Caml_string.bytes_to_string;
 
 var unsafe_of_string = Caml_string.bytes_of_string;
 
-exports.make             = make;
-exports.init             = init;
-exports.empty            = empty;
-exports.copy             = copy;
-exports.of_string        = of_string;
-exports.to_string        = to_string;
-exports.sub              = sub;
-exports.sub_string       = sub_string;
-exports.extend           = extend;
-exports.fill             = fill;
-exports.blit             = blit;
-exports.blit_string      = blit_string;
-exports.concat           = concat;
-exports.cat              = cat;
-exports.iter             = iter;
-exports.iteri            = iteri;
-exports.map              = map;
-exports.mapi             = mapi;
-exports.trim             = trim;
-exports.escaped          = escaped;
-exports.index            = index;
-exports.rindex           = rindex;
-exports.index_from       = index_from;
-exports.rindex_from      = rindex_from;
-exports.contains         = contains;
-exports.contains_from    = contains_from;
-exports.rcontains_from   = rcontains_from;
-exports.uppercase        = uppercase;
-exports.lowercase        = lowercase;
-exports.capitalize       = capitalize;
-exports.uncapitalize     = uncapitalize;
-exports.compare          = compare;
+exports.make = make;
+exports.init = init;
+exports.empty = empty;
+exports.copy = copy;
+exports.of_string = of_string;
+exports.to_string = to_string;
+exports.sub = sub;
+exports.sub_string = sub_string;
+exports.extend = extend;
+exports.fill = fill;
+exports.blit = blit;
+exports.blit_string = blit_string;
+exports.concat = concat;
+exports.cat = cat;
+exports.iter = iter;
+exports.iteri = iteri;
+exports.map = map;
+exports.mapi = mapi;
+exports.trim = trim;
+exports.escaped = escaped;
+exports.index = index;
+exports.rindex = rindex;
+exports.index_from = index_from;
+exports.rindex_from = rindex_from;
+exports.contains = contains;
+exports.contains_from = contains_from;
+exports.rcontains_from = rcontains_from;
+exports.uppercase = uppercase;
+exports.lowercase = lowercase;
+exports.capitalize = capitalize;
+exports.uncapitalize = uncapitalize;
+exports.compare = compare;
 exports.unsafe_to_string = unsafe_to_string;
 exports.unsafe_of_string = unsafe_of_string;
 /* No side effect */
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Caml_string             = __webpack_require__(5);
+var Caml_string = __webpack_require__(5);
 var Caml_builtin_exceptions = __webpack_require__(0);
 
 function chr(n) {
@@ -41487,14 +41694,14 @@ function escaped(c) {
   }
   switch (exit) {
     case 1 : 
-        var s = new Array(4);
+        var s = Caml_string.caml_create_string(4);
         s[0] = /* "\\" */92;
         s[1] = 48 + (c / 100 | 0) | 0;
         s[2] = 48 + (c / 10 | 0) % 10 | 0;
         s[3] = 48 + c % 10 | 0;
         return Caml_string.bytes_to_string(s);
     case 2 : 
-        var s$1 = new Array(1);
+        var s$1 = Caml_string.caml_create_string(1);
         s$1[0] = c;
         return Caml_string.bytes_to_string(s$1);
     
@@ -41521,11 +41728,11 @@ function compare(c1, c2) {
   return c1 - c2 | 0;
 }
 
-exports.chr       = chr;
-exports.escaped   = escaped;
+exports.chr = chr;
+exports.escaped = escaped;
 exports.lowercase = lowercase;
 exports.uppercase = uppercase;
-exports.compare   = compare;
+exports.compare = compare;
 /* No side effect */
 
 

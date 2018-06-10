@@ -46,17 +46,17 @@ module InternalResult = {
   external unsafeAsError : t => internalError = "%identity";
 
   let toResult = jsObj =>
-    switch (Js.Nullable.to_opt(jsObj##_type)) {
+    switch (Js.Nullable.toOption(jsObj##_type)) {
     | Some("error") => {
         let error = jsObj |> unsafeAsError;
-        Js.Result.Error({
+        Belt.Result.Error({
           message: error##text,
           from: { line: error##row, column: error##column },
           until: { line: error##endRow, column: error##endColumn },
           console: ""
         })
       }
-    | _ => Js.Result.Ok({
+    | _ => Belt.Result.Ok({
       code: (jsObj |> unsafeAsSuccess)##js_code,
       warnings: ""
     })
@@ -107,7 +107,7 @@ let compile = code => {
   json |> Js.Json.parseExn
        |> InternalResult.unsafeFromJson
        |> InternalResult.toResult
-       |> Js.Result.(
+       |> Belt.Result.(
           fun | Ok({ code }) => Ok({ code, warnings: consoleOutput })
               | Error(error) => Error(`BsCompileError({ ...error, console: consoleOutput }))
        );
