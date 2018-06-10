@@ -1,7 +1,7 @@
 {
   "name": "bs-in-a-box",
   "description": "Bindings to BuckleScript compiler",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "scripts": {
     "start": "bsb -make-world -w",
     "clean": "bsb -clean-world",
@@ -22,7 +22,7 @@
     "url": "git+https://github.com/glennsl/bs-in-a-box.git"
   },
   "devDependencies": {
-    "bs-platform": "^2.1.0",
+    "bs-platform": "^3.1.5",
     "webpack": "^3.10.0"
   }
 }
