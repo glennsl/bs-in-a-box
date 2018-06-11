@@ -1,7 +1,7 @@
 {
   "name": "bs-in-a-box",
   "description": "Bindings to BuckleScript compiler",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "scripts": {
     "start": "bsb -make-world -w",
     "clean": "bsb -clean-world",
